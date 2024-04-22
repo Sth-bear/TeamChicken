@@ -24,12 +24,11 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         setViewPager()
     }
 
     private fun setViewPager() {
-        val tabLayout = binding.tlMain
+        val tabLayout = binding.tlMainTapLayout
         val viewPager = binding.vpMain
         val adapter = ViewPagerAdapter(this)
         binding.vpMain.adapter= adapter
