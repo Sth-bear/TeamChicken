@@ -3,8 +3,8 @@ package com.example.teamprojectchicken.utils
 import java.text.DecimalFormat
 
 object FormatUtils {
-    private val decimalFormat = DecimalFormat("##,####")
     fun formatNumber(number:Int):String {
-        return "0${decimalFormat.format(number)}"
+        val formatted = "%010d".format(number)
+        return "0${formatted.substring(0,2)}-${formatted.substring(2,6)}-${formatted.substring(6)}"
     }
 }
