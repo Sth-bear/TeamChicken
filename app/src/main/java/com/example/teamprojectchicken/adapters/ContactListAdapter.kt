@@ -1,4 +1,40 @@
 package com.example.teamprojectchicken.adapters
 
-class ContactListAdapter {
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.example.teamprojectchicken.R
+import com.example.teamprojectchicken.data.Contact
+import com.example.teamprojectchicken.databinding.ItemRvContactListBinding
+import com.example.teamprojectchicken.utils.FormatUtils
+
+class ContactListAdapter(private val onClick: (Contact) -> Unit) : RecyclerView.Adapter<ContactListAdapter.ContactViewHolder>() {
+    var contactList = mutableListOf<Contact>()
+    class ContactViewHolder(private var binding : ItemRvContactListBinding, val onClick: (Contact) -> Unit) : RecyclerView.ViewHolder(binding.root) {
+        private var currentContact: Contact ?= null
+        init {
+            itemView.setOnClickListener {
+                currentContact?.let(onClick)
+            }
+        }
+        fun bind(contact: Contact) {
+            currentContact = contact
+            binding.ivItemRvUser.setImageResource(contact.userImage)
+            binding.tvItemRvName.text = contact.name
+            binding.tvItemRvNumber.text = FormatUtils.formatNumber(contact.number)
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_rv_contact_list,parent, false)
+        return ContactViewHolder(ItemRvContactListBinding.bind(view), onClick)
+    }
+
+    override fun getItemCount(): Int {
+        return contactList.size
+    }
+
+    override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
+        holder.bind(contactList[position])
+    }
 }
