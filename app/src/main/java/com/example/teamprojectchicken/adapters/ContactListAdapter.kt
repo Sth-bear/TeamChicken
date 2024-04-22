@@ -1,7 +1,9 @@
 package com.example.teamprojectchicken.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
@@ -10,7 +12,7 @@ import com.example.teamprojectchicken.utils.FormatUtils
 
 class ContactListAdapter(private val onClick: (Contact) -> Unit) : RecyclerView.Adapter<ContactListAdapter.ContactViewHolder>() {
     var contactList = mutableListOf<Contact>()
-    class ContactViewHolder(private var binding : ItemRvContactListBinding, val onClick: (Contact) -> Unit) : RecyclerView.ViewHolder(binding.root) {
+    class ContactViewHolder(private var binding : ItemRvContactListBinding, val onClick: (Contact) -> Unit, val layout: View) : RecyclerView.ViewHolder(binding.root) {
         private var currentContact: Contact ?= null
         init {
             itemView.setOnClickListener {
@@ -27,7 +29,7 @@ class ContactListAdapter(private val onClick: (Contact) -> Unit) : RecyclerView.
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_rv_contact_list,parent, false)
-        return ContactViewHolder(ItemRvContactListBinding.bind(view), onClick)
+        return ContactViewHolder(ItemRvContactListBinding.bind(view), onClick, view)
     }
 
     override fun getItemCount(): Int {
@@ -35,6 +37,7 @@ class ContactListAdapter(private val onClick: (Contact) -> Unit) : RecyclerView.
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
+        holder.layout.animation = AnimationUtils.loadAnimation(holder.layout.context, R.anim.item_animation)
         holder.bind(contactList[position])
     }
 }
