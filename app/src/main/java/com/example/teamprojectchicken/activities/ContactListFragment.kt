@@ -43,7 +43,7 @@ class ContactListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         contactListAdapter.contactList = DataSource.getDataSource().getContactList()
-        with(binding.rvContactList) {
+        with(binding.rvListList) {
             adapter = contactListAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
