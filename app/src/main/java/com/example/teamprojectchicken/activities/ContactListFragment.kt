@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
@@ -30,10 +31,6 @@ class ContactListFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        contactListAdapter.contactList = DataSource.getDataSource().getContactList()
-        with(binding.rvContactList) {
-            adapter = contactListAdapter
-        }
     }
 
     override fun onCreateView(
@@ -41,6 +38,15 @@ class ContactListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        contactListAdapter.contactList = DataSource.getDataSource().getContactList()
+        with(binding.rvContactList) {
+            adapter = contactListAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
     }
 
     companion object {
