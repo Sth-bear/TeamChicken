@@ -9,16 +9,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.Observer
+import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.utils.FormatUtils
-
+import com.example.teamprojectchicken.viewmodels.ContactViewModel
 
 private const val ARG_CONTACT = "contact"
 
 
 class ContactDetailFragment : Fragment() {
     private lateinit var callback: OnBackPressedCallback
+    private var viewModel = ContactViewModel()
     private var contact: Contact? = null
     private var _binding: FragmentContactDetailBinding? = null
     private val binding get() = _binding!!
@@ -44,6 +47,13 @@ class ContactDetailFragment : Fragment() {
     //ContactListFragment에서 받아온 값 출력
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        var heart = contact?.heart
+
+        // 라이브데이터에 contact.heart 저장
+        if (heart != null) {
+            viewModel.getData(heart)
+        }
+
         contact?.let { contact ->
             binding.apply {
                 etDetailName.setText(contact.name)
@@ -53,6 +63,22 @@ class ContactDetailFragment : Fragment() {
                 ivDetailProfile.setImageResource(contact.userImage)
                 tvDetailAge.text = FormatUtils.returnAge(contact.date)
                 tvDetailName.text = contact.name
+              
+                // 클릭시 뷰모델의 라이브데이터에 Not을 입력
+                btnDetailHeart.setOnClickListener {
+                    heart = heart?.not()
+                    heart?.let { it1 -> viewModel.setData(it1) }
+                }
+
+                // 라이브 데이터를 가져와서 이미지 세팅
+                val observer = Observer<Boolean> {
+                    if (it) {
+                        btnDetailHeart.setImageResource(R.drawable.ic_heart_filled)
+                    } else {
+                        btnDetailHeart.setImageResource(R.drawable.ic_heart)
+                    }
+                }
+                viewModel.liveData.observe(viewLifecycleOwner, observer)
             }
         }
     }
@@ -61,6 +87,7 @@ class ContactDetailFragment : Fragment() {
         super.onAttach(context)
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                contact?.heart = viewModel.liveData.value == true
                 parentFragmentManager.popBackStack()
             }
         }

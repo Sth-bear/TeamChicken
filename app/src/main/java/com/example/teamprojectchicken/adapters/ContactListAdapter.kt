@@ -1,12 +1,9 @@
 package com.example.teamprojectchicken.adapters
 
-import android.animation.AnimatorInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import androidx.core.graphics.alpha
-import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
@@ -23,7 +20,7 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     interface ItemClick {
-        fun onClick(view:View, position: Int)
+        fun onClick(view:View, position: Int, contact: Contact)
     }
     var itemClick: ItemClick? = null
 
@@ -49,15 +46,32 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return viewType
     }
 
+    fun heartClick(position: Int) {
+        contactList[position].heart = !contactList[position].heart
+        notifyItemChanged(position)
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         holder.itemView.setOnClickListener {
-            itemClick?.onClick(it,position)
+            itemClick?.onClick(it,position, contactList[position])
         }
+
         val currentItem = contactList[position]
         when(holder.itemViewType) {
             VIEW_TYPE_LINEAR -> {
                 (holder as LinearHolder).bind(currentItem)
+
                 holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context, R.anim.item_animation)
+                holder.heart.setOnClickListener {
+                    heartClick(position)
+                }
+
+                if (contactList[position].heart) {
+                    holder.heart.setImageResource(R.drawable.ic_heart_filled)
+                } else {
+                    holder.heart.setImageResource(R.drawable.ic_heart)
+                }
+
             }
             VIEW_TYPE_GRID -> {
                 (holder as GridHolder).bind(currentItem)
@@ -73,6 +87,7 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 tvItemRvNumber.text = FormatUtils.formatNumber(contact.number)
             }
         }
+        var heart = binding.btnRvHeart
     }
 
     class GridHolder(private val binding: ItemRvContactList2Binding): RecyclerView.ViewHolder(binding.root) {
