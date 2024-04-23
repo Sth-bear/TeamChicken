@@ -3,15 +3,12 @@ package com.example.teamprojectchicken.activities
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Observer
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
@@ -81,7 +78,6 @@ class ContactDetailFragment : Fragment() {
                 }
                 viewModel.liveData.observe(viewLifecycleOwner, observer)
             }
-
         }
     }
 
@@ -89,9 +85,7 @@ class ContactDetailFragment : Fragment() {
         super.onAttach(context)
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // 수정된 아이콘 설정을 다른 프래그먼트로 보냄
                 contact?.heart = viewModel.liveData.value == true
-                setFragmentResult(ContactListFragment.REQUEST_KEY, bundleOf(ContactListFragment.BUNDLE_KEY to contact))
                 parentFragmentManager.popBackStack()
             }
         }

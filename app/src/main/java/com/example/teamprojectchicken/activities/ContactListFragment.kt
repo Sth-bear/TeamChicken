@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ContactListAdapter
@@ -22,10 +23,9 @@ class ContactListFragment : Fragment() {
     private var param2: String? = null
     private val binding by lazy { FragmentContactListBinding.inflate(layoutInflater) }
     private val contactListAdapter by lazy {
-        ContactListAdapter {
-            adapterOnClick(it)
-        }
+        ContactListAdapter()
     }
+    private var layoutStyle: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +36,11 @@ class ContactListFragment : Fragment() {
 
         // 초기 어댑터 설정과 데이터 설정
         contactListAdapter.contactList = DataSource.getDataSource().getContactList()
+        contactListAdapter.viewType = 1
+        with(binding.rvListList) {
+            adapter = contactListAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
     }
 
     override fun onCreateView(
@@ -47,32 +52,42 @@ class ContactListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        contactListAdapter.contactList = DataSource.getDataSource().getContactList()
         with(binding.rvListList) {
             adapter = contactListAdapter
             layoutManager = LinearLayoutManager(requireContext())
+            binding.ivSet.setOnClickListener {
+                if (layoutStyle == 1) {
+                    layoutStyle = 2
+                    contactListAdapter.viewType = layoutStyle
+                    with(binding.rvListList) {
+                        adapter = contactListAdapter
+                        layoutManager = GridLayoutManager(requireContext(), 4)
+                    }
+                } else {
+                    layoutStyle = 1
+                    with(binding.rvListList) {
+                        contactListAdapter.viewType = layoutStyle
+                        adapter = contactListAdapter
+                        layoutManager = LinearLayoutManager(requireContext())
+                    }
+                }
+            }
+            contactListAdapter.itemClick = object : ContactListAdapter.ItemClick {
+                override fun onClick(view: View, position: Int, contact: Contact) {
+                    val fragment = ContactDetailFragment.newInstance(contact)
+                    parentFragmentManager.beginTransaction()
+                        .setCustomAnimations(
+                            R.anim.fade_in,
+                            R.anim.fade_out,
+                            R.anim.fade_in,
+                            R.anim.fade_out
+                        )
+                        .replace(R.id.root_frag, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+
+            }
         }
-
-        // 바뀐 데이터 받아오기
-        setFragmentResultListener(REQUEST_KEY) { requestKey, bundle ->
-            val contact = bundle.getParcelable<Contact>(BUNDLE_KEY)
-            Log.d("contact", "${contact?.heart}")
-        }
-
-    }
-
-    companion object {
-        const val REQUEST_KEY = "requestKey"
-        const val BUNDLE_KEY = "bundleKey"
-    }
-
-    // ContactDetailFragment 데이터 전달
-    fun adapterOnClick(contact: Contact) {
-        val fragment = ContactDetailFragment.newInstance(contact)
-        parentFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in,R.anim.fade_out)
-            .replace(R.id.root_frag, fragment)
-            .addToBackStack(null)
-            .commit()
     }
 }
