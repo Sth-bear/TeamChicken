@@ -9,19 +9,34 @@
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/sv_list_search"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/sv_search_radius"
         app:iconifiedByDefault="true"
         app:layout_constraintBottom_toTopOf="@+id/rv_list_list"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/iv_set"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:queryHint="Search" />
+        app:queryHint="Search"></androidx.appcompat.widget.SearchView>
+
+    <ImageView
+        android:id="@+id/iv_set"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_change2"
+        app:layout_constraintBottom_toTopOf="@+id/rv_list_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sv_list_search"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#908A8A8A" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list_list"
@@ -36,13 +51,14 @@
         android:id="@+id/btn_addPerson"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginBottom="32dp"
+        android:layout_margin="20dp"
         android:backgroundTint="#FFFFFF"
-        android:contentDescription="플로팅 버튼"
         android:src="@drawable/float_fab_shape"
+        app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:useCompatPadding="true" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 

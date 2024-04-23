@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setViewPager() {
-
+        val rootFragment = RootFragment()
         val unSelected: Int = ContextCompat.getColor(this, R.color.colorUnSelect)
         val selected: Int = ContextCompat.getColor(this, R.color.colorSelect)
         val tabLayout = binding.tlMainTapLayout
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(this)
         binding.vpMain.adapter = adapter
 
-        adapter.addFragment(RootFragment())
+        adapter.addFragment(rootFragment)
         adapter.addFragment(MyPageFragment())
 
         tabLayout.getTabAt(0)
