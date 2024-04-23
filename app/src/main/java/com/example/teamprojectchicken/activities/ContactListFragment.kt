@@ -65,6 +65,7 @@ class ContactListFragment : Fragment() {
         val fragment = ContactDetailFragment.newInstance(contact)
         parentFragmentManager.beginTransaction()
             .replace(R.id.root_frag, fragment)
+            .addToBackStack(null)
             .commit()
     }
 
