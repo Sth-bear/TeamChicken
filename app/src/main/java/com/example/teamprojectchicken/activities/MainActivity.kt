@@ -1,6 +1,6 @@
 package com.example.teamprojectchicken.activities
 
-import android.graphics.drawable.Drawable
+import android.graphics.PorterDuff
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ViewPagerAdapter
 import com.example.teamprojectchicken.databinding.ActivityMainBinding
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
@@ -28,25 +29,53 @@ class MainActivity : AppCompatActivity() {
 
     private fun setViewPager() {
 
+        val unSelected: Int = ContextCompat.getColor(this, R.color.colorUnSelect)
+        val selected: Int = ContextCompat.getColor(this, R.color.colorSelect)
         val tabLayout = binding.tlMainTapLayout
+
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.icon?.setColorFilter(selected, PorterDuff.Mode.SRC_IN)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                tab?.icon?.setColorFilter(unSelected, PorterDuff.Mode.SRC_IN)
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                // Do nothing
+            }
+        })
+
         val viewPager = binding.vpMain
         val adapter = ViewPagerAdapter(this)
-        binding.vpMain.adapter= adapter
+        binding.vpMain.adapter = adapter
 
         adapter.addFragment(RootFragment())
         adapter.addFragment(MyPageFragment())
 
-        // 탭레이아웃 아이콘 추가
-        val iconList = ArrayList<Drawable?>()
-        iconList.add(ContextCompat.getDrawable(this, R.drawable.ic_launcher_foreground))
-        iconList.add(ContextCompat.getDrawable(this, R.drawable.ic_launcher_foreground))
+        tabLayout.getTabAt(0)
 
-        // 탭레이아웃과 뷰페이저의 연결
+//         탭레이아웃과 뷰페이저의 연결
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.icon = iconList[position]
+            when (position) {
+                0 -> tab.icon = getDrawable(R.drawable.ic_home)
+                1 -> tab.icon = getDrawable(R.drawable.ic_mine)
+            }
         }.attach()
 
         // 시작 탭
         tabLayout.getTabAt(0)?.select()
     }
+
+
+    override fun onBackPressed() {
+        if (binding.vpMain.currentItem != 0) {
+            binding.vpMain.currentItem = 0
+        }else{
+            super.onBackPressed()
+        }
+    }
+
+
 }
