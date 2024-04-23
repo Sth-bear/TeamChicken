@@ -11,6 +11,7 @@ import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.databinding.FragmentMyPageBinding
+import com.example.teamprojectchicken.utils.FormatUtils
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,7 +54,7 @@ class ContactDetailFragment : Fragment() {
         contact?.let { contact ->
             binding.apply {
                 etDetailName.setText(contact.name)
-                etDetailPhoneNumber.setText(contact.number.toString())
+                etDetailPhoneNumber.setText(FormatUtils.formatNumber(contact.number))
                 etDetailBirth.setText(contact.date.toString())
                 etDetailEmail.setText(contact.email)
                 ivDetailProfile.setImageResource(contact.userImage)

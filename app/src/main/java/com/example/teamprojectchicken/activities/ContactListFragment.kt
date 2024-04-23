@@ -67,7 +67,8 @@ class ContactListFragment : Fragment() {
     fun adapterOnClick(contact: Contact) {
         val detailFragment = ContactDetailFragment.newInstance(contact)
         activity?.supportFragmentManager?.beginTransaction()?.apply {
-            replace(R.id.main, detailFragment)
+            hide(this@ContactListFragment)
+            add(R.id.main, detailFragment)
             addToBackStack(null)
             commit()
         }
