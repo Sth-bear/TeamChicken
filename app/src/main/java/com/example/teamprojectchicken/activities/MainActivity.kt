@@ -2,6 +2,7 @@ package com.example.teamprojectchicken.activities
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         val tabLayout = binding.tlMainTapLayout
         val viewPager = binding.vpMain
         val adapter = ViewPagerAdapter(this)
-        binding.vpMain.adapter= adapter
+        binding.vpMain.adapter = adapter
 
         adapter.addFragment(RootFragment())
         adapter.addFragment(MyPageFragment())
@@ -49,4 +50,15 @@ class MainActivity : AppCompatActivity() {
         // 시작 탭
         tabLayout.getTabAt(0)?.select()
     }
+
+
+    override fun onBackPressed() {
+        if (binding.vpMain.currentItem != 0) {
+            binding.vpMain.currentItem = 0
+        }else{
+            super.onBackPressed()
+        }
+    }
+
+
 }
