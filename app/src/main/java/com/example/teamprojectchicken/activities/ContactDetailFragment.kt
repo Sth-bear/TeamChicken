@@ -61,7 +61,9 @@ class ContactDetailFragment : Fragment() {
                 etDetailBirth.setText(contact.date.toString())
                 etDetailEmail.setText(contact.email)
                 ivDetailProfile.setImageResource(contact.userImage)
-
+                tvDetailAge.text = FormatUtils.returnAge(contact.date)
+                tvDetailName.text = contact.name
+              
                 // 클릭시 뷰모델의 라이브데이터에 Not을 입력
                 btnDetailHeart.setOnClickListener {
                     heart = heart?.not()
