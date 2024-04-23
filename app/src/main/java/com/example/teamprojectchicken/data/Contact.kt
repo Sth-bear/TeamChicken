@@ -12,5 +12,6 @@ data class Contact(
     val email: String,
     val date: Int,
     @DrawableRes
-    var userImage: Int
+    var userImage: Int,
+    var heart: Boolean
 ) : Parcelable

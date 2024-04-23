@@ -18,6 +18,7 @@ class ContactListAdapter(private val onClick: (Contact) -> Unit) : RecyclerView.
         init {
             itemView.setOnClickListener {
                 currentContact?.let(onClick)
+
             }
         }
         fun bind(contact: Contact) {
@@ -27,7 +28,7 @@ class ContactListAdapter(private val onClick: (Contact) -> Unit) : RecyclerView.
             binding.tvItemRvNumber.text = FormatUtils.formatNumber(contact.number)
         }
 
-        val imageView = binding.ivItemRvUser
+        var heart = binding.btnRvHeart
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
@@ -46,5 +47,20 @@ class ContactListAdapter(private val onClick: (Contact) -> Unit) : RecyclerView.
 
         holder.layout.animation = AnimationUtils.loadAnimation(holder.layout.context, R.anim.item_animation)
         holder.bind(contactList[position])
+
+        holder.heart.setOnClickListener {
+            heartClick(position)
+        }
+
+        if (contactList[position].heart) {
+            holder.heart.setImageResource(R.drawable.ic_heart_filled)
+        } else {
+            holder.heart.setImageResource(R.drawable.ic_heart)
+        }
+    }
+
+    fun heartClick(position: Int) {
+        contactList[position].heart = !contactList[position].heart
+        notifyItemChanged(position)
     }
 }

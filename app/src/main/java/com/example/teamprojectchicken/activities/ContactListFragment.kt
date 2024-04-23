@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ContactListAdapter
@@ -31,6 +34,10 @@ class ContactListFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+        // 초기 어댑터 설정과 데이터 설정
+        contactListAdapter.contactList = DataSource.getDataSource().getContactList()
+
     }
 
     override fun onCreateView(
@@ -42,29 +49,31 @@ class ContactListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        contactListAdapter.contactList = DataSource.getDataSource().getContactList()
+//        contactListAdapter.contactList = DataSource.getDataSource().getContactList()
         with(binding.rvListList) {
             adapter = contactListAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+
+        // 바뀐 데이터 받아오기
+        setFragmentResultListener(REQUEST_KEY) { requestKey, bundle ->
+            val contact = bundle.getParcelable<Contact>(BUNDLE_KEY)
+        }
+
+
+
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ContactListFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        const val REQUEST_KEY = "requestKey"
+        const val BUNDLE_KEY = "bundleKey"
     }
 
     // ContactDetailFragment 데이터 전달
     fun adapterOnClick(contact: Contact) {
         val fragment = ContactDetailFragment.newInstance(contact)
         parentFragmentManager.beginTransaction()
-            .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,R.anim.exit_to_right)
+            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in,R.anim.fade_out)
             .replace(R.id.root_frag, fragment)
             .addToBackStack(null)
             .commit()
