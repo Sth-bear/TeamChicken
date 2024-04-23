@@ -61,15 +61,4 @@
             android:icon="@drawable/ic_mine" />
 
     </com.google.android.material.tabs.TabLayout>
-
-    <ImageView
-        android:id="@+id/plusButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
-        android:elevation="5dp"
-        app:layout_constraintBottom_toBottomOf="@+id/vp_main"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_add_circle_outline_100" />
 </androidx.constraintlayout.widget.ConstraintLayout>
