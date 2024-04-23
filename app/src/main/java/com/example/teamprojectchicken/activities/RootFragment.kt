@@ -31,16 +31,27 @@ class RootFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
 
-        childFragmentManager.beginTransaction().apply {
-            replace(R.id.root_frag, ContactListFragment())
-            commit()
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        super.onViewCreated(view, savedInstanceState)
+        if (childFragmentManager.findFragmentById(R.id.root_frag)==null){
+            childFragmentManager.beginTransaction().apply {
+                replace(R.id.root_frag, ContactListFragment())
+                addToBackStack(null)
+                commit()
+            }
         }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_root, container, false)
     }

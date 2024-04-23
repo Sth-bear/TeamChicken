@@ -3,6 +3,7 @@ package com.example.teamprojectchicken.activities
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -81,7 +82,6 @@ class ContactDetailFragment : Fragment() {
                 viewModel.liveData.observe(viewLifecycleOwner, observer)
             }
 
-            contact.heart = viewModel.liveData.value == true
         }
     }
 
@@ -90,6 +90,7 @@ class ContactDetailFragment : Fragment() {
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // 수정된 아이콘 설정을 다른 프래그먼트로 보냄
+                contact?.heart = viewModel.liveData.value == true
                 setFragmentResult(ContactListFragment.REQUEST_KEY, bundleOf(ContactListFragment.BUNDLE_KEY to contact))
                 parentFragmentManager.popBackStack()
             }
