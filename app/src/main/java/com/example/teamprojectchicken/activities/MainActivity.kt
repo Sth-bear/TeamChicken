@@ -27,12 +27,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setViewPager() {
+
         val tabLayout = binding.tlMainTapLayout
         val viewPager = binding.vpMain
         val adapter = ViewPagerAdapter(this)
         binding.vpMain.adapter= adapter
 
-        adapter.addFragment(ContactListFragment())
+        adapter.addFragment(RootFragment())
         adapter.addFragment(MyPageFragment())
 
         // 탭레이아웃 아이콘 추가
