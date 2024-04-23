@@ -2,6 +2,7 @@ package com.example.teamprojectchicken.activities
 
 import android.app.ActivityOptions
 import android.os.Bundle
+import android.util.Log
 import android.util.Pair
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -62,7 +63,15 @@ class ContactListFragment : Fragment() {
             }
     }
 
+    // ContactDetailFragment 데이터 전달
     fun adapterOnClick(contact: Contact) {
-
+        val detailFragment = ContactDetailFragment.newInstance(contact)
+        activity?.supportFragmentManager?.beginTransaction()?.apply {
+            replace(R.id.main, detailFragment)
+            addToBackStack(null)
+            commit()
+        }
     }
+
+
 }
