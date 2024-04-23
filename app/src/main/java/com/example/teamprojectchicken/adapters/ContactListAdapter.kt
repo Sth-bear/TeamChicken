@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
@@ -25,6 +26,8 @@ class ContactListAdapter(private val onClick: (Contact) -> Unit) : RecyclerView.
             binding.tvItemRvName.text = contact.name
             binding.tvItemRvNumber.text = FormatUtils.formatNumber(contact.number)
         }
+
+        val imageView = binding.ivItemRvUser
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
@@ -37,6 +40,10 @@ class ContactListAdapter(private val onClick: (Contact) -> Unit) : RecyclerView.
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
+        holder.itemView.setOnClickListener {
+            onClick(contactList[position])
+        }
+
         holder.layout.animation = AnimationUtils.loadAnimation(holder.layout.context, R.anim.item_animation)
         holder.bind(contactList[position])
     }
