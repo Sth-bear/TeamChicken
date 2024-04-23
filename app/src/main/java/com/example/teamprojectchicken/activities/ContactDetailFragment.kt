@@ -51,6 +51,8 @@ class ContactDetailFragment : Fragment() {
                 etDetailBirth.setText(contact.date.toString())
                 etDetailEmail.setText(contact.email)
                 ivDetailProfile.setImageResource(contact.userImage)
+                tvDetailAge.text = FormatUtils.returnAge(contact.date)
+                tvDetailName.text = contact.name
             }
         }
     }
