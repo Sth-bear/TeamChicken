@@ -1,17 +1,21 @@
 package com.example.teamprojectchicken.activities
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import com.example.teamprojectchicken.R
+import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
+import com.example.teamprojectchicken.databinding.FragmentMyPageBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val ARG_CONTACT = "contact"
+
 
 /**
  * A simple [Fragment] subclass.
@@ -20,44 +24,59 @@ private const val ARG_PARAM2 = "param2"
  */
 class ContactDetailFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-    private lateinit var binding: FragmentContactDetailBinding
+    private var contact: Contact? = null
+    private var _binding: FragmentContactDetailBinding? = null
+    private val binding get() = _binding!!
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            contact = it.getParcelable(ARG_CONTACT, Contact::class.java)
         }
     }
 
+    // 뷰 바인딩
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-
-        return inflater.inflate(R.layout.fragment_contact_detail, container, false)
+        _binding = FragmentContactDetailBinding.inflate(inflater, container, false)
+        return binding.root
 
     }
+
+    //ContactListFragment에서 받아온 값 출력
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        contact?.let { contact ->
+            binding.apply {
+                etDetailName.setText(contact.name)
+                etDetailPhoneNumber.setText(contact.number.toString())
+                etDetailBirth.setText(contact.date.toString())
+                etDetailEmail.setText(contact.email)
+                ivDetailProfile.setImageResource(contact.userImage)
+            }
+        }
+
+    }
+
 
     companion object {
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
+         * @param contact Parameter 1. parcelable data
          * @return A new instance of fragment ContactDetailFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(contact: Contact) =
             ContactDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putParcelable(ARG_CONTACT, contact)
                 }
             }
     }
