@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
@@ -20,10 +22,9 @@ class ContactListFragment : Fragment() {
     private var param2: String? = null
     private val binding by lazy { FragmentContactListBinding.inflate(layoutInflater) }
     private val contactListAdapter by lazy {
-        ContactListAdapter {
-            adapterOnClick(it)
-        }
+        ContactListAdapter()
     }
+    private var layoutStyle:Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +32,13 @@ class ContactListFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        contactListAdapter.contactList = DataSource.getDataSource().getContactList()
+        contactListAdapter.viewType = 1
+        with(binding.rvListList) {
+            adapter = contactListAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+
     }
 
     override fun onCreateView(
@@ -42,10 +50,31 @@ class ContactListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        contactListAdapter.contactList = DataSource.getDataSource().getContactList()
-        with(binding.rvListList) {
-            adapter = contactListAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+        binding.ivSet.setOnClickListener {
+            if(layoutStyle == 1) {
+                layoutStyle = 2
+                contactListAdapter.viewType = layoutStyle
+                with(binding.rvListList) {
+                    adapter = contactListAdapter
+                    layoutManager = GridLayoutManager(requireContext(), 4)
+                }
+            } else {
+                layoutStyle = 1
+                with(binding.rvListList) {
+                    contactListAdapter.viewType = layoutStyle
+                    adapter = contactListAdapter
+                    layoutManager = LinearLayoutManager(requireContext())
+                }
+            }
+        }
+        contactListAdapter.itemClick = object : ContactListAdapter.ItemClick {
+            override fun onClick(view: View, position: Int) {
+                val fragment = ContactDetailFragment.newInstance(DataSource.getDataSource().getContactList()[position])
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.root_frag, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
 
     }
@@ -60,15 +89,4 @@ class ContactListFragment : Fragment() {
                 }
             }
     }
-
-    // ContactDetailFragment 데이터 전달
-    fun adapterOnClick(contact: Contact) {
-        val fragment = ContactDetailFragment.newInstance(contact)
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.root_frag, fragment)
-            .addToBackStack(null)
-            .commit()
-    }
-
-
 }
