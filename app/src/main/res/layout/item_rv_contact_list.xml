@@ -8,13 +8,13 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_item_rv_user"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/user01"
-        app:civ_border_color="#ff000000"
+        app:civ_border_color="#E6E6E6"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,21 +23,40 @@
     <TextView
         android:id="@+id/tv_item_rv_name"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginStart="32dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="24dp"
         android:gravity="center_vertical"
-        android:text="TextView"
-        android:textSize="20dp"
+        android:text="신예찬"
+        android:textSize="18dp"
         android:textStyle="bold"
+        android:textColor="#616161"
+        app:layout_constraintBottom_toTopOf="@+id/tv_item_rv_number"
         app:layout_constraintStart_toEndOf="@+id/iv_item_rv_user"
-        app:layout_constraintTop_toTopOf="@+id/iv_item_rv_user" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/tv_item_rv_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_item_rv_user"
-        app:layout_constraintStart_toStartOf="@+id/tv_item_rv_name"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:text="010-9664-4342"
+        android:textColor="#979797"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_item_rv_user"
         app:layout_constraintTop_toBottomOf="@+id/tv_item_rv_name" />
+
+    <ImageView
+        android:id="@+id/btn_rv_heart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="44dp"
+        android:src="@drawable/ic_heart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#D1D1D1" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
