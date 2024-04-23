@@ -1,27 +1,24 @@
 package com.example.teamprojectchicken.activities
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
+import com.example.teamprojectchicken.utils.FormatUtils
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
 private const val ARG_CONTACT = "contact"
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ContactDetailFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ContactDetailFragment : Fragment() {
-    // TODO: Rename and change types of parameters
+    private lateinit var callback: OnBackPressedCallback
     private var contact: Contact? = null
     private var _binding: FragmentContactDetailBinding? = null
     private val binding get() = _binding!!
@@ -50,13 +47,27 @@ class ContactDetailFragment : Fragment() {
         contact?.let { contact ->
             binding.apply {
                 etDetailName.setText(contact.name)
-                etDetailPhoneNumber.setText(contact.number.toString())
+                etDetailPhoneNumber.setText(FormatUtils.formatNumber(contact.number))
                 etDetailBirth.setText(contact.date.toString())
                 etDetailEmail.setText(contact.email)
                 ivDetailProfile.setImageResource(contact.userImage)
             }
         }
+    }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                parentFragmentManager.popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this,callback)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
     }
 
 
