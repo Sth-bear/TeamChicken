@@ -47,6 +47,7 @@ class ContactListFragment : Fragment() {
             adapter = contactListAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+
     }
 
     companion object {
