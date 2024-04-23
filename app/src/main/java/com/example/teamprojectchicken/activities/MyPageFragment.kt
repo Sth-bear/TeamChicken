@@ -1,17 +1,16 @@
 package com.example.teamprojectchicken.activities
 
 import android.app.AlertDialog
-import android.content.Context
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.viewpager2.widget.ViewPager2
-import com.example.teamprojectchicken.R
-import com.example.teamprojectchicken.databinding.FragmentContactListBinding
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import com.example.teamprojectchicken.databinding.FragmentMyPageBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -25,6 +24,8 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class MyPageFragment : Fragment() {
+    private lateinit var photoPickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
+
     private var param1: String? = null
     private var param2: String? = null
     private val binding by lazy { FragmentMyPageBinding.inflate(layoutInflater) }
@@ -37,27 +38,27 @@ class MyPageFragment : Fragment() {
 
         }
         editInfo()
+        photoPickerLauncher =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+                uri?.let {
+                    binding.ivMyProfile.setImageURI(uri)
+                }
+            }
+        editProfileImage()
     }
 
-    //    override fun onAttach(context: Context) {
-//        super.onAttach(context)
-//        callback = object : OnBackPressedCallback(true) {
-//            override fun handleOnBackPressed() {
-//                val viewPager = requireActivity().findViewById<ViewPager2>(R.id.vp_main)
-//                viewPager.currentItem = 0
-//            }
-//        }
-//        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
-//    }
-//
-//    override fun onDetach() {
-//        super.onDetach()
-//        callback.remove()
-//    }
+    private fun editProfileImage() {
+        binding.ivMyProfile.setOnClickListener {
+            val request = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            photoPickerLauncher.launch(request)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         // Inflate the layout for this fragment
         return binding.root
     }
