@@ -1,6 +1,8 @@
 package com.example.teamprojectchicken.activities
 
+import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,13 +18,13 @@ import com.example.teamprojectchicken.databinding.FragmentMyPageBinding
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+
 /**
  * A simple [Fragment] subclass.
  * Use the [MyPageFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
 class MyPageFragment : Fragment() {
-    private lateinit var callback: OnBackPressedCallback
     private var param1: String? = null
     private var param2: String? = null
     private val binding by lazy { FragmentMyPageBinding.inflate(layoutInflater) }
@@ -32,10 +34,12 @@ class MyPageFragment : Fragment() {
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
+
         }
+        editInfo()
     }
 
-//    override fun onAttach(context: Context) {
+    //    override fun onAttach(context: Context) {
 //        super.onAttach(context)
 //        callback = object : OnBackPressedCallback(true) {
 //            override fun handleOnBackPressed() {
@@ -50,13 +54,60 @@ class MyPageFragment : Fragment() {
 //        super.onDetach()
 //        callback.remove()
 //    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         return binding.root
+    }
+
+    //정보 수정하는 부분
+    fun editInfo() {
+        var isEditable = false
+        binding.btnMySave.setOnClickListener {
+            if (!isEditable) {
+                isEditable = true
+                binding.btnMySave.text = "DONE"
+                binding.etMyName.isEnabled = true
+                binding.etMyBirth.isEnabled = true
+                binding.etMyEmail.isEnabled = true
+                binding.etMyPhoneNumber.isEnabled = true
+
+                binding.etMyName.setTextColor(Color.BLACK)
+                binding.etMyBirth.setTextColor(Color.BLACK)
+                binding.etMyEmail.setTextColor(Color.BLACK)
+                binding.etMyPhoneNumber.setTextColor(Color.BLACK)
+            } else {
+                AlertDialog.Builder(context).apply {
+                    setTitle("회원정보 수정")
+                    setMessage("정보수정을 완료하시겠습니까?")
+                    setPositiveButton("예") { dialog, which ->
+                        val newName = binding.etMyName.text.toString()
+                        val newBirth = binding.etMyBirth.text.toString()
+                        val newEmail = binding.etMyEmail.text.toString()
+                        val newPhoneNumber = binding.etMyPhoneNumber.text.toString()
+                        binding.etMyName.isEnabled = false
+                        binding.etMyBirth.isEnabled = false
+                        binding.etMyEmail.isEnabled = false
+                        binding.etMyPhoneNumber.isEnabled = false
+
+                        // 상태 업데이트
+                        isEditable = false
+                        binding.btnMySave.text = "EDIT"
+                        binding.etMyName.setTextColor(Color.parseColor("#E3E3E3"))
+                        binding.etMyBirth.setTextColor(Color.parseColor("#E3E3E3"))
+                        binding.etMyEmail.setTextColor(Color.parseColor("#E3E3E3"))
+                        binding.etMyPhoneNumber.setTextColor(Color.parseColor("#E3E3E3"))
+                    }
+                    setNegativeButton("아니오", null)
+                    show()
+                }
+            }
+
+        }
+
+
     }
 
     companion object {

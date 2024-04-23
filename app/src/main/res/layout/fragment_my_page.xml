@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".activities.MyPageFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,12 +26,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_my_save"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
-            android:text="SAVE"
+            android:background="@null"
+            android:text="EDIT"
             android:textColor="#C1C1C1"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -111,7 +113,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="41dp"
                 android:text="Name"
-                android:textColor="#BDBDBD"
+                android:textColor="#878787"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cl_my" />
@@ -124,6 +126,7 @@
                 android:layout_marginTop="7dp"
                 android:layout_marginEnd="24dp"
                 android:backgroundTint="#E3E3E3"
+                android:enabled="false"
                 android:text="Ian Wilkerson"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -150,6 +153,7 @@
                 android:layout_marginEnd="24dp"
                 android:backgroundTint="#E3E3E3"
                 android:text="010-3334-2154"
+                android:enabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_my_phoneNumber_title" />
@@ -175,6 +179,7 @@
                 android:layout_marginEnd="24dp"
                 android:backgroundTint="#E3E3E3"
                 android:text="ianwilk@gmail.com"
+                android:enabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_my_email_title" />
@@ -200,6 +205,7 @@
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="50dp"
                 android:backgroundTint="#E3E3E3"
+                android:enabled="false"
                 android:text="25 Dec 1987"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
