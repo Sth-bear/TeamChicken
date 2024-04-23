@@ -56,7 +56,6 @@ class ContactDetailFragment : Fragment() {
                 ivDetailProfile.setImageResource(contact.userImage)
             }
         }
-
     }
 
 

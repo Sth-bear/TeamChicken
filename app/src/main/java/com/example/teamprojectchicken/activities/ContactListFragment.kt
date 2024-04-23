@@ -64,9 +64,9 @@ class ContactListFragment : Fragment() {
     fun adapterOnClick(contact: Contact) {
         val fragment = ContactDetailFragment.newInstance(contact)
         parentFragmentManager.beginTransaction()
+            .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left,R.anim.exit_to_right)
             .replace(R.id.root_frag, fragment)
+            .addToBackStack(null)
             .commit()
     }
-
-
 }
