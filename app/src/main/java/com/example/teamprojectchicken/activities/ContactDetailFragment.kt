@@ -25,10 +25,8 @@ import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.utils.FormatUtils
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
-import com.google.android.material.snackbar.Snackbar
 
 private const val ARG_CONTACT = "contact"
-
 
 class ContactDetailFragment : Fragment() {
     private lateinit var photoPickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
@@ -193,7 +191,7 @@ class ContactDetailFragment : Fragment() {
 
                         binding.apply {
                             tvDetailAge.text = FormatUtils.returnAge(date)
-                            tvDetailAge.text = name
+                            tvDetailName.text = name
                             etDetailBirth.setText(FormatUtils.formatDate(date))
                             etDetailEmail.setText(email)
                             etDetailName.setText(name)

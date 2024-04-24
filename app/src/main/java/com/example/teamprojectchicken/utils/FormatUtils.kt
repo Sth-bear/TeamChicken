@@ -2,7 +2,6 @@ package com.example.teamprojectchicken.utils
 
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
-import java.text.DecimalFormat
 import java.time.LocalDate
 
 object FormatUtils {
