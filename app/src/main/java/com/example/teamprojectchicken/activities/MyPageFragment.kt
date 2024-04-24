@@ -10,7 +10,9 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.graphics.toColor
 import androidx.fragment.app.Fragment
+import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.databinding.FragmentMyPageBinding
 import com.example.teamprojectchicken.utils.FormatUtils
 
@@ -77,10 +79,10 @@ class MyPageFragment : Fragment() {
                 binding.etMyEmail.isEnabled = true
                 binding.etMyPhoneNumber.isEnabled = true
 
-                binding.etMyName.setTextColor(Color.BLACK)
-                binding.etMyBirth.setTextColor(Color.BLACK)
-                binding.etMyEmail.setTextColor(Color.BLACK)
-                binding.etMyPhoneNumber.setTextColor(Color.BLACK)
+                binding.etMyName.setTextColor(R.color.myProfileUpdate.toInt())
+                binding.etMyBirth.setTextColor(R.color.myProfileUpdate.toInt())
+                binding.etMyEmail.setTextColor(R.color.myProfileUpdate.toInt())
+                binding.etMyPhoneNumber.setTextColor(R.color.myProfileUpdate.toInt())
             } else {
                 AlertDialog.Builder(context).apply {
                     setTitle("회원정보 수정")
