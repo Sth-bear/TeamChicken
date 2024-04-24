@@ -66,6 +66,11 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         when (holder.itemViewType) {
             VIEW_TYPE_LINEAR -> {
                 (holder as LinearHolder).bind(currentItem)
+                if (contactList[position].uri == null) {
+                    holder.image.setImageResource(contactList[position].userImage)
+                } else {
+                    holder.image.setImageURI(contactList[position].uri)
+                }
 
                 holder.itemView.animation =
                     AnimationUtils.loadAnimation(holder.itemView.context, R.anim.item_animation)
@@ -83,6 +88,11 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             VIEW_TYPE_GRID -> {
                 (holder as GridHolder).bind(currentItem)
+                if (contactList[position].uri == null) {
+                    holder.image.setImageResource(contactList[position].userImage)
+                } else {
+                    holder.image.setImageURI(contactList[position].uri)
+                }
             }
 
         }
@@ -91,20 +101,20 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class LinearHolder(private val binding: ItemRvContactListBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(contact:Contact) {
             binding.apply {
-                ivItemRvUser.setImageResource(contact.userImage)
                 tvItemRvName.text = contact.name
                 tvItemRvNumber.text = FormatUtils.formatNumber(contact.number)
             }
         }
         var heart = binding.btnRvHeart
+        var image = binding.ivItemRvUser
     }
 
     class GridHolder(private val binding: ItemRvContactList2Binding): RecyclerView.ViewHolder(binding.root) {
         fun bind(contact: Contact) {
             binding.apply {
-                ivItemRvUser.setImageResource(contact.userImage)
                 tvItemRvName.text = contact.name
             }
         }
+        var image = binding.ivItemRvUser
     }
 }
