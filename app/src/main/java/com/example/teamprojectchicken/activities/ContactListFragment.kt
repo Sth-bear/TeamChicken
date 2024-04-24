@@ -1,11 +1,14 @@
 package com.example.teamprojectchicken.activities
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +16,7 @@ import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
+import com.example.teamprojectchicken.databinding.AddcontactDialogBinding
 import com.example.teamprojectchicken.databinding.FragmentContactListBinding
 
 private const val ARG_PARAM1 = "param1"
@@ -41,6 +45,8 @@ class ContactListFragment : Fragment() {
             adapter = contactListAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+
+        addContact()
     }
 
     override fun onCreateView(
@@ -89,5 +95,35 @@ class ContactListFragment : Fragment() {
 
             }
         }
+    }
+
+    // 연락처 추가 다이얼로그
+    private fun addContact() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val alertDialog: AlertDialog = builder.create()
+        val binding: AddcontactDialogBinding = AddcontactDialogBinding.inflate(layoutInflater)
+        alertDialog.setView(binding.root)
+
+        binding.dlBtnCancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
+        binding.dlBtnRegister.setOnClickListener {
+            val name = binding.dlEtName.text.toString()
+            val number = binding.dlEtNumber.text.toString()
+            val email = binding.dlEtEmail.text.toString()
+            contactListAdapter.contactList.add(
+                Contact(
+                    name = name,
+                    number = number.toInt(),
+                    email = email,
+                    date = 20000000,
+                    userImage = R.drawable.ic_mine,
+                    heart = false
+                )
+            )
+            contactListAdapter.notifyDataSetChanged()
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
     }
 }
