@@ -8,8 +8,8 @@ class ContactViewModel(): ViewModel() {
     val liveData : LiveData<Boolean>
         get() = data
 
-    fun getData(boolean: Boolean) {
-        data.value = boolean
+    fun getData(): Boolean? {
+        return liveData.value
     }
 
     fun setData(input:Boolean){

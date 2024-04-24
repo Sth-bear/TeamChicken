@@ -1,30 +1,21 @@
 package com.example.teamprojectchicken.activities
 
-import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
-import com.example.teamprojectchicken.databinding.FragmentContactListBinding
-
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-class ContactListFragment : Fragment() {
+import com.example.teamprojectchicken.databinding.FragmentHeartBinding
+class HeartFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
-    private val binding by lazy { FragmentContactListBinding.inflate(layoutInflater) }
+    private val binding by lazy { FragmentHeartBinding.inflate(layoutInflater) }
     private val contactListAdapter by lazy {
         ContactListAdapter()
     }
@@ -32,20 +23,14 @@ class ContactListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
 
         // 초기 어댑터 설정과 데이터 설정
         contactListAdapter.contactList = DataSource.getDataSource().getContactList()
         contactListAdapter.viewType = 1
-        with(binding.rvListList) {
+        with(binding.rvHeartList) {
             adapter = contactListAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-
-        addContact()
     }
 
     override fun onCreateView(
@@ -57,20 +42,20 @@ class ContactListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(binding.rvListList) {
+        with(binding.rvHeartList) {
             adapter = contactListAdapter
             layoutManager = LinearLayoutManager(requireContext())
             binding.ivSet.setOnClickListener {
                 if (layoutStyle == 1) {
                     layoutStyle = 2
                     contactListAdapter.viewType = layoutStyle
-                    with(binding.rvListList) {
+                    with(binding.rvHeartList) {
                         adapter = contactListAdapter
                         layoutManager = GridLayoutManager(requireContext(), 4)
                     }
                 } else {
                     layoutStyle = 1
-                    with(binding.rvListList) {
+                    with(binding.rvHeartList) {
                         contactListAdapter.viewType = layoutStyle
                         adapter = contactListAdapter
                         layoutManager = LinearLayoutManager(requireContext())
@@ -95,29 +80,4 @@ class ContactListFragment : Fragment() {
             }
         }
     }
-    // plus버튼을 클릭하면 다이얼로그 창이 나타남
-    private fun addContact() {
-        binding.btnAddPerson.setOnClickListener {
-            val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-            val alertDialog: AlertDialog = builder.create()
-            val v1 = layoutInflater.inflate(R.layout.addcontact_dialog, null)
-            alertDialog.setView(v1)
-
-            val name: EditText? = v1.findViewById(R.id.dl_et_name)
-            val number: EditText? = v1.findViewById(R.id.dl_et_number)
-            val email: EditText? = v1.findViewById(R.id.dl_et_email)
-            val cancel: Button? = v1.findViewById(R.id.dl_btn_cancel)
-            val register: Button? = v1.findViewById(R.id.dl_btn_register)
-            cancel?.setOnClickListener {
-                alertDialog.dismiss()
-            }
-            register?.setOnClickListener {
-                contactListAdapter.contactList.add(Contact(name.toString(), number.toString().toInt(), email.toString(), 0, R.drawable.ic_mine, false))
-                contactListAdapter.notifyDataSetChanged()
-                alertDialog.dismiss()
-            }
-            alertDialog.show()
-        }
-    }
-
 }
