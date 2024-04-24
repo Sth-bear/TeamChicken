@@ -21,6 +21,7 @@ import com.example.teamprojectchicken.data.contactList
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.utils.FormatUtils
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
+import com.google.android.material.snackbar.Snackbar
 
 private const val ARG_CONTACT = "contact"
 
@@ -41,12 +42,13 @@ class ContactDetailFragment : Fragment() {
             contact = it.getParcelable(ARG_CONTACT, Contact::class.java)
         }
 
-        photoPickerLauncher =registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            uri?.let {
-                binding.ivDetailProfile.setImageURI(uri)
-                selectedImageUri =uri
+        photoPickerLauncher =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+                uri?.let {
+                    binding.ivDetailProfile.setImageURI(uri)
+                    selectedImageUri = uri
+                }
             }
-        }
     }
 
     // 뷰 바인딩
@@ -74,7 +76,7 @@ class ContactDetailFragment : Fragment() {
             binding.apply {
                 etDetailName.setText(contact.name)
                 etDetailPhoneNumber.setText(FormatUtils.formatNumber(contact.number))
-                etDetailBirth.setText(contact.date.toString())
+                etDetailBirth.setText(FormatUtils.formatDate(contact.date))
                 etDetailEmail.setText(contact.email)
                 ivDetailProfile.setImageResource(contact.userImage)
                 tvDetailAge.text = FormatUtils.returnAge(contact.date)
@@ -140,13 +142,33 @@ class ContactDetailFragment : Fragment() {
                     setTitle("연락처 수정")
                     setMessage("정보수정을 완료하시겠습니까?")
                     setPositiveButton("예") { dialog, which ->
-                        contact?.name = binding.etDetailName.text.toString()
-                        contact?.email = binding.etDetailEmail.text.toString()
-                        // contact?.number = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
-                        contact?.date = binding.etDetailBirth.text.toString().toInt()
+                        val name = binding.etDetailName.text.toString()
+                        val date = FormatUtils.checkDate(binding.etDetailBirth.text.toString())
+                        val email = binding.etDetailEmail.text.toString()
+                        val phoneNumber = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
+                        val fragView = this@ContactDetailFragment.requireView()
+                        if (name.isBlank()) {
+                            FormatUtils.showSnackBar(fragView,"이름을 입력해주세요.")
+                            return@setPositiveButton
+                        }
+                        if (FormatUtils.checkFormat(fragView,date,phoneNumber)) {
+                            return@setPositiveButton
+                        }
 
-                        binding.tvDetailName.text = contact?.name
-                        binding.tvDetailAge.text = FormatUtils.returnAge(contact?.date.toString().toInt())
+                        contact?.name = name
+                        contact?.date = date
+                        contact?.email = email
+                        contact?.number = phoneNumber
+
+                        binding.apply {
+                            tvDetailAge.text = FormatUtils.returnAge(date)
+                            tvDetailAge.text = name
+                            etDetailBirth.setText(FormatUtils.formatDate(date))
+                            etDetailEmail.setText(email)
+                            etDetailName.setText(name)
+                            etDetailPhoneNumber.setText(FormatUtils.formatNumber(phoneNumber))
+                        }
+
                         //오류나는 부분
                         selectedImageUri?.let { uri ->
                             contact?.userImage = uri.toString().toInt()
@@ -172,7 +194,7 @@ class ContactDetailFragment : Fragment() {
             etDetailBirth.isEnabled = isEnabled
             etDetailEmail.isEnabled = isEnabled
             etDetailPhoneNumber.isEnabled = isEnabled
-            ivDetailProfile.isEnabled=isEnabled
+            ivDetailProfile.isEnabled = isEnabled
         }
     }
 

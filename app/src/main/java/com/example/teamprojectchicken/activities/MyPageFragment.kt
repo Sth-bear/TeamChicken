@@ -82,13 +82,26 @@ class MyPageFragment : Fragment() {
                     setMessage("정보수정을 완료하시겠습니까?")
                     setPositiveButton("예") { dialog, which ->
                         val newName = binding.etMyName.text.toString()
-                        val newBirth = binding.etMyBirth.text.toString()
+                        val newBirth = FormatUtils.checkDate(binding.etMyBirth.text.toString())
                         val newEmail = binding.etMyEmail.text.toString()
-                        val newPhoneNumber = binding.etMyPhoneNumber.text.toString()
+                        val newPhoneNumber = FormatUtils.checkPhoneNumber(binding.etMyPhoneNumber.text.toString())
+                        val fragView = this@MyPageFragment.requireView()
+                        if (newName.isBlank()) {
+                            FormatUtils.showSnackBar(fragView,"이름을 입력해주세요.")
+                            return@setPositiveButton
+                        }
+                        if (FormatUtils.checkFormat(fragView,newBirth,newPhoneNumber)) {
+                            return@setPositiveButton
+                        }
 
-
-                        binding.tvMyName.text = newName
-                        binding.tvMyAge.text = FormatUtils.returnAge(newBirth.toInt())
+                        binding.apply {
+                            tvMyName.text = newName
+                            tvMyAge.text = FormatUtils.returnAge(newBirth)
+                            etMyEmail.setText(newEmail)
+                            etMyName.setText(newEmail)
+                            etMyBirth.setText(FormatUtils.formatDate(newBirth))
+                            etMyPhoneNumber.setText(FormatUtils.formatNumber(newPhoneNumber))
+                        }
 
                         // 상태 업데이트
                         isEditable = false
