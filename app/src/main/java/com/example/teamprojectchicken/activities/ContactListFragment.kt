@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
+import com.example.teamprojectchicken.databinding.AddcontactDialogBinding
 import com.example.teamprojectchicken.databinding.FragmentContactListBinding
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
 class ContactListFragment : Fragment() {
@@ -107,30 +109,50 @@ class ContactListFragment : Fragment() {
         super.onResume()
         contactListAdapter.notifyItemRangeChanged(0, list.size)
     }
-    // plus버튼을 클릭하면 다이얼로그 창이 나타남
+    // 연락처 추가 다이얼로그
     private fun addContact() {
         binding.btnAddPerson.setOnClickListener {
             val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
             val alertDialog: AlertDialog = builder.create()
-            val v1 = layoutInflater.inflate(R.layout.addcontact_dialog, null)
-            alertDialog.setView(v1)
+            val binding: AddcontactDialogBinding = AddcontactDialogBinding.inflate(layoutInflater)
+            alertDialog.setView(binding.root)
 
-            val name: EditText? = v1.findViewById(R.id.dl_et_name)
-            val number: EditText? = v1.findViewById(R.id.dl_et_number)
-            val email: EditText? = v1.findViewById(R.id.dl_et_email)
-            val cancel: Button? = v1.findViewById(R.id.dl_btn_cancel)
-            val register: Button? = v1.findViewById(R.id.dl_btn_register)
-            cancel?.setOnClickListener {
+            binding.dlBtnCancel.setOnClickListener {
                 alertDialog.dismiss()
             }
-            register?.setOnClickListener {
-                contactListAdapter.contactList.add(Contact(name.toString(), number.toString().toInt(), email.toString(), 0, R.drawable.ic_mine, false, null))
-                contactListAdapter.notifyDataSetChanged()
-                alertDialog.dismiss()
+            binding.dlBtnRegister.setOnClickListener {
+                val name = binding.dlEtName.text.toString()
+                val number = binding.dlEtNumber.text.toString()
+                val email = binding.dlEtEmail.text.toString()
+                if (name.isNotEmpty() && number.isNotEmpty() && email.isNotEmpty()) {
+                    try {
+                        if (number.toInt() is Int) {
+                            contactListAdapter.contactList.add(
+                                Contact(
+                                    name = name,
+                                    number = number.toInt(),
+                                    email = email,
+                                    date = 20000000,
+                                    userImage = R.drawable.ic_mine,
+                                    heart = false,
+                                    uri = null
+                                )
+                            )
+                            contactListAdapter.notifyDataSetChanged()
+                            Toast.makeText(requireContext(), "연락처를 추가했습니다.", Toast.LENGTH_SHORT).show()
+                            alertDialog.dismiss()
+                        }
+                    } catch (e:java.lang.NumberFormatException) {
+                        Toast.makeText(requireContext(), "11자리 이하의 전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    }
+                } else if (name.isEmpty() || number.isEmpty() || email.isEmpty()) {
+                    Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
             }
             alertDialog.show()
         }
     }
+
 
     val itemTouch = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
         override fun onMove(
