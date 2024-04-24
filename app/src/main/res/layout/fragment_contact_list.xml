@@ -65,6 +65,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:useCompatPadding="true" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_addNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:backgroundTint="#FFFFFF"
+        android:src="@drawable/ic_add_notification"
+        android:tint="#D5D5D5"
+        app:borderWidth="0dp"
+        app:fabCustomSize="50dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_addPerson"
+        app:useCompatPadding="true" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
