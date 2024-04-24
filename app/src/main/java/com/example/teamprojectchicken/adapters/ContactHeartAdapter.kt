@@ -2,34 +2,23 @@ package com.example.teamprojectchicken.adapters
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
-import com.example.teamprojectchicken.activities.ContactListFragment
-import com.example.teamprojectchicken.activities.MainActivity
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.ItemRvContactList2Binding
 import com.example.teamprojectchicken.databinding.ItemRvContactListBinding
 import com.example.teamprojectchicken.utils.FormatUtils
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
 
-class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ContactHeartAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var contactList = mutableListOf<Contact>()
     var viewType:Int = ContactViewModel().getType()
-
     companion object{
         const val VIEW_TYPE_LINEAR = 1
         const val VIEW_TYPE_GRID = 2
     }
-
-    interface ItemClick {
-        fun onClick(view:View, position: Int, contact: Contact)
-    }
-    var itemClick: ItemClick? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType) {
             VIEW_TYPE_LINEAR -> {
@@ -45,7 +34,7 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return contactList.size
+        return contactList.filter { it.heart }.toMutableList().size
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -53,48 +42,33 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun heartClick(position: Int) {
-        contactList[position].heart = !contactList[position].heart
-        notifyItemChanged(position)
+        contactList.filter { it.heart }[position].heart = !contactList.filter { it.heart }[position].heart
+        notifyItemRemoved(position)
+        notifyItemRangeRemoved(position, itemCount - position)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        holder.itemView.setOnClickListener {
-            itemClick?.onClick(it,position, contactList[position])
-        }
-
-        val currentItem = contactList[position]
-        when (holder.itemViewType) {
+        val currentItem = contactList.filter { it.heart }.toMutableList()[position]
+        when(holder.itemViewType) {
             VIEW_TYPE_LINEAR -> {
                 (holder as LinearHolder).bind(currentItem)
-                if (contactList[position].uri == null) {
-                    holder.image.setImageResource(contactList[position].userImage)
+                if (contactList.filter { it.heart }[position].uri == null) {
+                    holder.image.setImageResource(contactList.filter { it.heart }[position].userImage)
                 } else {
-                    holder.image.setImageURI(contactList[position].uri)
+                    holder.image.setImageURI(contactList.filter { it.heart }[position].uri)
                 }
 
-                holder.itemView.animation =
-                    AnimationUtils.loadAnimation(holder.itemView.context, R.anim.item_animation)
+                holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context, R.anim.item_animation)
                 holder.heart.setOnClickListener {
                     heartClick(position)
                 }
+                holder.heart.setImageResource(R.drawable.ic_heart_filled)
 
-                if (contactList[position].heart) {
-                    holder.heart.setImageResource(R.drawable.ic_heart_filled)
-                } else {
-                    holder.heart.setImageResource(R.drawable.ic_heart)
-                }
 
             }
-
             VIEW_TYPE_GRID -> {
                 (holder as GridHolder).bind(currentItem)
-                if (contactList[position].uri == null) {
-                    holder.image.setImageResource(contactList[position].userImage)
-                } else {
-                    holder.image.setImageURI(contactList[position].uri)
-                }
             }
-
         }
     }
 
@@ -112,9 +86,13 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class GridHolder(private val binding: ItemRvContactList2Binding): RecyclerView.ViewHolder(binding.root) {
         fun bind(contact: Contact) {
             binding.apply {
+                if (contact.uri == null) {
+                    ivItemRvUser.setImageResource(contact.userImage)
+                } else {
+                    ivItemRvUser.setImageURI(contact.uri)
+                }
                 tvItemRvName.text = contact.name
             }
         }
-        var image = binding.ivItemRvUser
     }
 }
