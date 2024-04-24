@@ -1,5 +1,6 @@
 package com.example.teamprojectchicken.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,6 +54,8 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        Log.d("contact_data","$contactList")
+
         holder.itemView.setOnClickListener {
             itemClick?.onClick(it,position, contactList[position])
         }

@@ -1,12 +1,13 @@
 package com.example.teamprojectchicken.activities
 
+import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.setFragmentResultListener
+import android.widget.Button
+import android.widget.EditText
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teamprojectchicken.R
@@ -46,6 +47,8 @@ class ContactListFragment : Fragment() {
                 GridLayoutManager(requireContext(),4)
             }
         }
+
+        addContact()
     }
 
     override fun onCreateView(
@@ -99,4 +102,29 @@ class ContactListFragment : Fragment() {
             }
         }
     }
+    // plus버튼을 클릭하면 다이얼로그 창이 나타남
+    private fun addContact() {
+        binding.btnAddPerson.setOnClickListener {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+            val alertDialog: AlertDialog = builder.create()
+            val v1 = layoutInflater.inflate(R.layout.addcontact_dialog, null)
+            alertDialog.setView(v1)
+
+            val name: EditText? = v1.findViewById(R.id.dl_et_name)
+            val number: EditText? = v1.findViewById(R.id.dl_et_number)
+            val email: EditText? = v1.findViewById(R.id.dl_et_email)
+            val cancel: Button? = v1.findViewById(R.id.dl_btn_cancel)
+            val register: Button? = v1.findViewById(R.id.dl_btn_register)
+            cancel?.setOnClickListener {
+                alertDialog.dismiss()
+            }
+            register?.setOnClickListener {
+                contactListAdapter.contactList.add(Contact(name.toString(), number.toString().toInt(), email.toString(), 0, R.drawable.ic_mine, false))
+                contactListAdapter.notifyDataSetChanged()
+                alertDialog.dismiss()
+            }
+            alertDialog.show()
+        }
+    }
+
 }

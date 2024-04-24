@@ -1,5 +1,6 @@
 package com.example.teamprojectchicken.activities
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
+import com.example.teamprojectchicken.data.contactList
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.utils.FormatUtils
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
@@ -25,6 +27,7 @@ class ContactDetailFragment : Fragment() {
     private var contact: Contact? = null
     private var _binding: FragmentContactDetailBinding? = null
     private val binding get() = _binding!!
+    val userList = contactList()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +44,7 @@ class ContactDetailFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentContactDetailBinding.inflate(inflater, container, false)
+        editUserInfo()
         return binding.root
     }
 
@@ -51,9 +55,8 @@ class ContactDetailFragment : Fragment() {
 
         // 라이브데이터에 contact.heart 저장
         if (heart != null) {
-            viewModel.getData(heart)
+            viewModel.setData(heart)
         }
-
         contact?.let { contact ->
             binding.apply {
                 etDetailName.setText(contact.name)
@@ -68,6 +71,7 @@ class ContactDetailFragment : Fragment() {
                 btnDetailHeart.setOnClickListener {
                     heart = heart?.not()
                     heart?.let { it1 -> viewModel.setData(it1) }
+                    contact.heart = heart == true
                 }
 
                 // 라이브 데이터를 가져와서 이미지 세팅
@@ -79,6 +83,7 @@ class ContactDetailFragment : Fragment() {
                     }
                 }
                 viewModel.liveData.observe(viewLifecycleOwner, observer)
+                tvDetailAge.text = FormatUtils.returnAge(contact.date)
             }
         }
     }
@@ -87,7 +92,6 @@ class ContactDetailFragment : Fragment() {
         super.onAttach(context)
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                contact?.heart = viewModel.liveData.value == true
                 parentFragmentManager.popBackStack()
             }
         }
@@ -109,4 +113,32 @@ class ContactDetailFragment : Fragment() {
                 }
             }
     }
+
+
+    fun editUserInfo(){
+        var isEditable = false
+        binding.btnDetailSave.setOnClickListener {
+            if(!isEditable){
+                isEditable = true
+                binding.btnDetailSave.text = "DONE"
+                binding.etDetailName.isEnabled = true
+                binding.etDetailBirth.isEnabled = true
+                binding.etDetailEmail.isEnabled = true
+                binding.etDetailPhoneNumber.isEnabled = true
+            }else{
+                AlertDialog.Builder(context).apply {
+                    setTitle("연락처 수정")
+                    setMessage("정보수정을 완료하시겠습니까?")
+                    setPositiveButton("예"){dialog, which ->
+                        contact?.name = binding.etDetailName.text.toString()
+                        contact?.email = binding.etDetailEmail.text.toString()
+                    }
+                    setNegativeButton("아니요", null)
+                    show()
+
+                }
+            }
+        }
+    }
+
 }
