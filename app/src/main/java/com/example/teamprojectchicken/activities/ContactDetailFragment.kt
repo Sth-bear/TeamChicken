@@ -131,6 +131,7 @@ class ContactDetailFragment : Fragment() {
                     setMessage("정보수정을 완료하시겠습니까?")
                     setPositiveButton("예"){dialog, which ->
                         contact?.name = binding.etDetailName.text.toString()
+                        contact?.email = binding.etDetailEmail.text.toString()
                     }
                     setNegativeButton("아니요", null)
                     show()
