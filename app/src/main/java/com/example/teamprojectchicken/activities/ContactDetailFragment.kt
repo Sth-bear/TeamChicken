@@ -55,7 +55,7 @@ class ContactDetailFragment : Fragment() {
 
         // 라이브데이터에 contact.heart 저장
         if (heart != null) {
-            viewModel.getData(heart)
+            viewModel.setData(heart)
         }
         contact?.let { contact ->
             binding.apply {
@@ -83,6 +83,7 @@ class ContactDetailFragment : Fragment() {
                     }
                 }
                 viewModel.liveData.observe(viewLifecycleOwner, observer)
+                tvDetailAge.text = FormatUtils.returnAge(contact.date)
             }
         }
     }
@@ -91,7 +92,6 @@ class ContactDetailFragment : Fragment() {
         super.onAttach(context)
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-
                 parentFragmentManager.popBackStack()
             }
         }

@@ -7,20 +7,22 @@ import androidx.lifecycle.ViewModel
 class ContactViewModel(): ViewModel() {
     private var data = MutableLiveData<Boolean>()
     private var viewType = MutableLiveData(1)
-    val liveData : LiveData<Boolean>
+    val liveData: LiveData<Boolean>
         get() = data
 
-    val _viewType : LiveData<Int> get() = viewType
+    val _viewType: LiveData<Int>
+        get() = viewType
 
-    fun getData(boolean: Boolean) {
-        data.value = boolean
+
+    fun getData(): Boolean? {
+        return liveData.value
     }
 
-    fun setData(input:Boolean){
+    fun setData(input: Boolean) {
         data.value = input
     }
 
-    fun getType():Int {
+    fun getType(): Int {
         return _viewType.value!!
     }
 
@@ -31,5 +33,5 @@ class ContactViewModel(): ViewModel() {
             viewType.value = 1
         }
     }
-
 }
+

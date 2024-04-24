@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         binding.vpMain.adapter = adapter
 
         adapter.addFragment(rootFragment)
+        adapter.addFragment(HeartFragment())
         adapter.addFragment(MyPageFragment())
 
         tabLayout.getTabAt(0)
@@ -60,7 +61,8 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             when (position) {
                 0 -> tab.icon = getDrawable(R.drawable.ic_home)
-                1 -> tab.icon = getDrawable(R.drawable.ic_mine)
+                1 -> tab.icon = getDrawable(R.drawable.ic_heart)
+                2 -> tab.icon = getDrawable(R.drawable.ic_mine)
             }
         }.attach()
 
