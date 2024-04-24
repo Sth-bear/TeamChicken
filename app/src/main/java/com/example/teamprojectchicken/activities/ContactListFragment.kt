@@ -2,14 +2,12 @@ package com.example.teamprojectchicken.activities
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teamprojectchicken.R
@@ -17,6 +15,7 @@ import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.FragmentContactListBinding
+import com.example.teamprojectchicken.viewmodels.ContactViewModel
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -28,7 +27,8 @@ class ContactListFragment : Fragment() {
     private val contactListAdapter by lazy {
         ContactListAdapter()
     }
-    private var layoutStyle: Int = 1
+    private val viewModel = ContactViewModel()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +39,6 @@ class ContactListFragment : Fragment() {
 
         // 초기 어댑터 설정과 데이터 설정
         contactListAdapter.contactList = DataSource.getDataSource().getContactList()
-        contactListAdapter.viewType = 1
         with(binding.rvListList) {
             adapter = contactListAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -59,19 +58,23 @@ class ContactListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         with(binding.rvListList) {
             adapter = contactListAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = if (viewModel.getType() == 1) {
+                LinearLayoutManager(requireContext())
+            } else {
+                GridLayoutManager(requireContext(),4)
+            }
             binding.ivSet.setOnClickListener {
-                if (layoutStyle == 1) {
-                    layoutStyle = 2
-                    contactListAdapter.viewType = layoutStyle
+                if (viewModel.getType() == 1) {
+                    viewModel.setType()
+                    contactListAdapter.viewType = viewModel.getType()
                     with(binding.rvListList) {
                         adapter = contactListAdapter
                         layoutManager = GridLayoutManager(requireContext(), 4)
                     }
                 } else {
-                    layoutStyle = 1
+                    viewModel.setType()
                     with(binding.rvListList) {
-                        contactListAdapter.viewType = layoutStyle
+                        contactListAdapter.viewType = viewModel.getType()
                         adapter = contactListAdapter
                         layoutManager = LinearLayoutManager(requireContext())
                     }

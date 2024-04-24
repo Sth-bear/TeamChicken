@@ -8,9 +8,9 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Contact(
     var name: String,
-    val number: Int,
-    val email: String,
-    val date: Int,
+    var number: Int,
+    var email: String,
+    var date: Int,
     @DrawableRes
     var userImage: Int,
     var heart: Boolean
