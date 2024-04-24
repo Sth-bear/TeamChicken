@@ -27,4 +27,18 @@ object FormatUtils {
         return "${age} years young"
     }
 
+    fun checkPhoneNumber(number:String): Int{
+        val input = number.drop(1)
+        val formatted = input.replace("-","")
+        if (!formatted.all{it.isDigit()}) {
+            return -1
+        }
+        if (formatted.length != 10) {
+            return -1
+        }
+        return formatted.toInt()
+    }
+
+
+
 }
