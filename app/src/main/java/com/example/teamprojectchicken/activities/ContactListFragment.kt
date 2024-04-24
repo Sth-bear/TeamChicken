@@ -124,7 +124,7 @@ class ContactListFragment : Fragment() {
                 alertDialog.dismiss()
             }
             register?.setOnClickListener {
-                contactListAdapter.contactList.add(Contact(name.toString(), number.toString().toInt(), email.toString(), 0, R.drawable.ic_mine, false))
+                contactListAdapter.contactList.add(Contact(name.toString(), number.toString().toInt(), email.toString(), 0, R.drawable.ic_mine, false, null))
                 contactListAdapter.notifyDataSetChanged()
                 alertDialog.dismiss()
             }
