@@ -16,29 +16,19 @@ import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.FragmentContactListBinding
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
-
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 class ContactListFragment : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
     private val binding by lazy { FragmentContactListBinding.inflate(layoutInflater) }
-    private val contactListAdapter by lazy {
+    private val viewModel = ContactViewModel()
+    val contactListAdapter by lazy {
         ContactListAdapter()
     }
-    private val viewModel = ContactViewModel()
-
+    companion object {
+        var list: MutableList<Contact> = DataSource.getDataSource().getContactList()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-
-        // 초기 어댑터 설정과 데이터 설정
-        contactListAdapter.contactList = DataSource.getDataSource().getContactList()
+        contactListAdapter.contactList = list
         with(binding.rvListList) {
             adapter = contactListAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -97,6 +87,11 @@ class ContactListFragment : Fragment() {
 
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        contactListAdapter.notifyItemRangeChanged(0, list.size)
     }
     // plus버튼을 클릭하면 다이얼로그 창이 나타남
     private fun addContact() {
