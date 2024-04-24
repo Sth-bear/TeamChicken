@@ -2,6 +2,7 @@ package com.example.teamprojectchicken.activities
 
 import android.app.AlertDialog
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,6 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import com.example.teamprojectchicken.R
@@ -22,18 +26,26 @@ private const val ARG_CONTACT = "contact"
 
 
 class ContactDetailFragment : Fragment() {
+    private lateinit var photoPickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var callback: OnBackPressedCallback
     private var viewModel = ContactViewModel()
     private var contact: Contact? = null
     private var _binding: FragmentContactDetailBinding? = null
+    private var selectedImageUri: Uri? = null
     private val binding get() = _binding!!
-    val userList = contactList()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             contact = it.getParcelable(ARG_CONTACT, Contact::class.java)
+        }
+
+        photoPickerLauncher =registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+            uri?.let {
+                binding.ivDetailProfile.setImageURI(uri)
+                selectedImageUri =uri
+            }
         }
     }
 
@@ -51,6 +63,7 @@ class ContactDetailFragment : Fragment() {
     //ContactListFragment에서 받아온 값 출력
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        editDetailImage()
         var heart = contact?.heart
 
         // 라이브데이터에 contact.heart 저장
@@ -66,7 +79,7 @@ class ContactDetailFragment : Fragment() {
                 ivDetailProfile.setImageResource(contact.userImage)
                 tvDetailAge.text = FormatUtils.returnAge(contact.date)
                 tvDetailName.text = contact.name
-              
+
                 // 클릭시 뷰모델의 라이브데이터에 Not을 입력
                 btnDetailHeart.setOnClickListener {
                     heart = heart?.not()
@@ -95,7 +108,7 @@ class ContactDetailFragment : Fragment() {
                 parentFragmentManager.popBackStack()
             }
         }
-        requireActivity().onBackPressedDispatcher.addCallback(this,callback)
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onDetach() {
@@ -114,25 +127,35 @@ class ContactDetailFragment : Fragment() {
             }
     }
 
-
-    fun editUserInfo(){
+    //디테일 페이지 정보 수정
+    fun editUserInfo() {
         var isEditable = false
         binding.btnDetailSave.setOnClickListener {
-            if(!isEditable){
+            if (!isEditable) {
                 isEditable = true
                 binding.btnDetailSave.text = "DONE"
-                binding.etDetailName.isEnabled = true
-                binding.etDetailBirth.isEnabled = true
-                binding.etDetailEmail.isEnabled = true
-                binding.etDetailPhoneNumber.isEnabled = true
-            }else{
+                enableEditTextFields(true)
+            } else {
                 AlertDialog.Builder(context).apply {
                     setTitle("연락처 수정")
                     setMessage("정보수정을 완료하시겠습니까?")
-                    setPositiveButton("예"){dialog, which ->
+                    setPositiveButton("예") { dialog, which ->
                         contact?.name = binding.etDetailName.text.toString()
                         contact?.email = binding.etDetailEmail.text.toString()
-                        contact?.number = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
+                        // contact?.number = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
+                        contact?.date = binding.etDetailBirth.text.toString().toInt()
+
+                        binding.tvDetailName.text = contact?.name
+                        binding.tvDetailAge.text = FormatUtils.returnAge(contact?.date.toString().toInt())
+                        //오류나는 부분
+                        selectedImageUri?.let { uri ->
+                            contact?.userImage = uri.toString().toInt()
+                        }
+
+                        isEditable = false
+                        enableEditTextFields(false)
+                        binding.btnDetailSave.text = "EDIT"
+
                     }
                     setNegativeButton("아니요", null)
                     show()
@@ -142,4 +165,22 @@ class ContactDetailFragment : Fragment() {
         }
     }
 
+    //editText enable 관리 함수
+    private fun enableEditTextFields(isEnabled: Boolean) {
+        with(binding) {
+            etDetailName.isEnabled = isEnabled
+            etDetailBirth.isEnabled = isEnabled
+            etDetailEmail.isEnabled = isEnabled
+            etDetailPhoneNumber.isEnabled = isEnabled
+            ivDetailProfile.isEnabled=isEnabled
+        }
+    }
+
+    private fun editDetailImage() {
+        binding.ivDetailProfile.setOnClickListener {
+            val request = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            photoPickerLauncher.launch(request)
+        }
+    }
 }
+

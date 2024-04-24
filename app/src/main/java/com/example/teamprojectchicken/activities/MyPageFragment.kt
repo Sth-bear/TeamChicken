@@ -74,15 +74,8 @@ class MyPageFragment : Fragment() {
             if (!isEditable) {
                 isEditable = true
                 binding.btnMySave.text = "DONE"
-                binding.etMyName.isEnabled = true
-                binding.etMyBirth.isEnabled = true
-                binding.etMyEmail.isEnabled = true
-                binding.etMyPhoneNumber.isEnabled = true
-
-                binding.etMyName.setTextColor(R.color.myProfileUpdate.toInt())
-                binding.etMyBirth.setTextColor(R.color.myProfileUpdate.toInt())
-                binding.etMyEmail.setTextColor(R.color.myProfileUpdate.toInt())
-                binding.etMyPhoneNumber.setTextColor(R.color.myProfileUpdate.toInt())
+                enableEditTextFieldsInMyPage(true)
+                changeColorAfterEnabledOpen()
             } else {
                 AlertDialog.Builder(context).apply {
                     setTitle("회원정보 수정")
@@ -97,18 +90,12 @@ class MyPageFragment : Fragment() {
                         binding.tvMyName.text = newName
                         binding.tvMyAge.text = FormatUtils.returnAge(newBirth.toInt())
 
-                        binding.etMyName.isEnabled = false
-                        binding.etMyBirth.isEnabled = false
-                        binding.etMyEmail.isEnabled = false
-                        binding.etMyPhoneNumber.isEnabled = false
-
                         // 상태 업데이트
                         isEditable = false
+                        enableEditTextFieldsInMyPage(false)
+
                         binding.btnMySave.text = "EDIT"
-                        binding.etMyName.setTextColor(Color.parseColor("#E3E3E3"))
-                        binding.etMyBirth.setTextColor(Color.parseColor("#E3E3E3"))
-                        binding.etMyEmail.setTextColor(Color.parseColor("#E3E3E3"))
-                        binding.etMyPhoneNumber.setTextColor(Color.parseColor("#E3E3E3"))
+                        changeColorAfterEnabledClose()
                     }
                     setNegativeButton("아니요", null)
                     show()
@@ -136,4 +123,30 @@ class MyPageFragment : Fragment() {
                 }
             }
     }
+
+    // edit눌렀을 때 editext 상태 변경
+    private fun enableEditTextFieldsInMyPage(isEnabled: Boolean){
+        with(binding){
+            binding.etMyName.isEnabled = isEnabled
+            binding.etMyBirth.isEnabled = isEnabled
+            binding.etMyEmail.isEnabled = isEnabled
+            binding.etMyPhoneNumber.isEnabled = isEnabled
+        }
+    }
+    // 수정 불가능 모드일 때 텍스트 컬러
+    private fun changeColorAfterEnabledClose(){
+        binding.etMyName.setTextColor(Color.parseColor("#E3E3E3"))
+        binding.etMyBirth.setTextColor(Color.parseColor("#E3E3E3"))
+        binding.etMyEmail.setTextColor(Color.parseColor("#E3E3E3"))
+        binding.etMyPhoneNumber.setTextColor(Color.parseColor("#E3E3E3"))
+    }
+    // 수정 가능 모드일 때 텍스트 컬러
+    private fun changeColorAfterEnabledOpen(){
+        val openColor = R.color.myProfileUpdate.toInt()
+        binding.etMyName.setTextColor(openColor)
+        binding.etMyBirth.setTextColor(openColor)
+        binding.etMyEmail.setTextColor(openColor)
+        binding.etMyPhoneNumber.setTextColor(openColor)
+    }
+
 }
