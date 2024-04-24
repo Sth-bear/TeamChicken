@@ -20,8 +20,8 @@ class ContactViewModel(): ViewModel() {
         data.value = input
     }
 
-    fun getType() {
-        viewType.value
+    fun getType():Int {
+        return _viewType.value!!
     }
 
     fun setType() {
