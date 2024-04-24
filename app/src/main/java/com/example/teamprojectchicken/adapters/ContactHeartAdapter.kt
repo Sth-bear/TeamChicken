@@ -52,6 +52,11 @@ class ContactHeartAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         when(holder.itemViewType) {
             VIEW_TYPE_LINEAR -> {
                 (holder as LinearHolder).bind(currentItem)
+                if (contactList.filter { it.heart }[position].uri == null) {
+                    holder.image.setImageResource(contactList.filter { it.heart }[position].userImage)
+                } else {
+                    holder.image.setImageURI(contactList.filter { it.heart }[position].uri)
+                }
 
                 holder.itemView.animation = AnimationUtils.loadAnimation(holder.itemView.context, R.anim.item_animation)
                 holder.heart.setOnClickListener {
@@ -70,18 +75,22 @@ class ContactHeartAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class LinearHolder(private val binding: ItemRvContactListBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(contact:Contact) {
             binding.apply {
-                ivItemRvUser.setImageResource(contact.userImage)
                 tvItemRvName.text = contact.name
                 tvItemRvNumber.text = FormatUtils.formatNumber(contact.number)
             }
         }
         var heart = binding.btnRvHeart
+        var image = binding.ivItemRvUser
     }
 
     class GridHolder(private val binding: ItemRvContactList2Binding): RecyclerView.ViewHolder(binding.root) {
         fun bind(contact: Contact) {
             binding.apply {
-                ivItemRvUser.setImageResource(contact.userImage)
+                if (contact.uri == null) {
+                    ivItemRvUser.setImageResource(contact.userImage)
+                } else {
+                    ivItemRvUser.setImageURI(contact.uri)
+                }
                 tvItemRvName.text = contact.name
             }
         }
