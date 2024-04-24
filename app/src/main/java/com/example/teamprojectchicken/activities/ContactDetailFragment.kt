@@ -132,6 +132,7 @@ class ContactDetailFragment : Fragment() {
                     setPositiveButton("예"){dialog, which ->
                         contact?.name = binding.etDetailName.text.toString()
                         contact?.email = binding.etDetailEmail.text.toString()
+                        contact?.number = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
                     }
                     setNegativeButton("아니요", null)
                     show()
