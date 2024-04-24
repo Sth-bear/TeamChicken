@@ -38,7 +38,4 @@ object FormatUtils {
         }
         return formatted.toInt()
     }
-
-
-
 }
