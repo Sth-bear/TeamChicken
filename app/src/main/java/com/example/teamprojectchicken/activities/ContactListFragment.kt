@@ -40,7 +40,11 @@ class ContactListFragment : Fragment() {
         contactListAdapter.contactList = DataSource.getDataSource().getContactList()
         with(binding.rvListList) {
             adapter = contactListAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = if (viewModel.getType() == 1) {
+                LinearLayoutManager(requireContext())
+            } else {
+                GridLayoutManager(requireContext(),4)
+            }
         }
     }
 
