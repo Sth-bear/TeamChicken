@@ -86,7 +86,6 @@ class MyPageFragment : Fragment() {
                         val newEmail = binding.etMyEmail.text.toString()
                         val newPhoneNumber = binding.etMyPhoneNumber.text.toString()
 
-
                         binding.tvMyName.text = newName
                         binding.tvMyAge.text = FormatUtils.returnAge(newBirth.toInt())
 
@@ -104,25 +103,6 @@ class MyPageFragment : Fragment() {
         }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MyPageFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MyPageFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 
     // edit눌렀을 때 editext 상태 변경
     private fun enableEditTextFieldsInMyPage(isEnabled: Boolean){
