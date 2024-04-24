@@ -5,5 +5,6 @@
     <color name="mainColor">#18DBA9</color>
     <color name="colorSelect">#18DBA9</color>
     <color name="colorUnSelect">#C1C1C1</color>
+    <color name="myProfileUpdate">#636363</color>
 
 </resources>
