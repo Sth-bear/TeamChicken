@@ -41,12 +41,13 @@ class ContactDetailFragment : Fragment() {
             contact = it.getParcelable(ARG_CONTACT, Contact::class.java)
         }
 
-        photoPickerLauncher =registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            uri?.let {
-                binding.ivDetailProfile.setImageURI(uri)
-                selectedImageUri =uri
+        photoPickerLauncher =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+                uri?.let {
+                    binding.ivDetailProfile.setImageURI(uri)
+                    selectedImageUri = uri
+                }
             }
-        }
     }
 
     // 뷰 바인딩
@@ -64,41 +65,7 @@ class ContactDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         editDetailImage()
-        var heart = contact?.heart
-
-        // 라이브데이터에 contact.heart 저장
-        if (heart != null) {
-            viewModel.setData(heart)
-        }
-        contact?.let { contact ->
-            binding.apply {
-                etDetailName.setText(contact.name)
-                etDetailPhoneNumber.setText(FormatUtils.formatNumber(contact.number))
-                etDetailBirth.setText(contact.date.toString())
-                etDetailEmail.setText(contact.email)
-                ivDetailProfile.setImageResource(contact.userImage)
-                tvDetailAge.text = FormatUtils.returnAge(contact.date)
-                tvDetailName.text = contact.name
-
-                // 클릭시 뷰모델의 라이브데이터에 Not을 입력
-                btnDetailHeart.setOnClickListener {
-                    heart = heart?.not()
-                    heart?.let { it1 -> viewModel.setData(it1) }
-                    contact.heart = heart == true
-                }
-
-                // 라이브 데이터를 가져와서 이미지 세팅
-                val observer = Observer<Boolean> {
-                    if (it) {
-                        btnDetailHeart.setImageResource(R.drawable.ic_heart_filled)
-                    } else {
-                        btnDetailHeart.setImageResource(R.drawable.ic_heart)
-                    }
-                }
-                viewModel.liveData.observe(viewLifecycleOwner, observer)
-                tvDetailAge.text = FormatUtils.returnAge(contact.date)
-            }
-        }
+        viewDetailFragmentInfo()
     }
 
     override fun onAttach(context: Context) {
@@ -142,25 +109,59 @@ class ContactDetailFragment : Fragment() {
                     setPositiveButton("예") { dialog, which ->
                         contact?.name = binding.etDetailName.text.toString()
                         contact?.email = binding.etDetailEmail.text.toString()
-                        // contact?.number = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
                         contact?.date = binding.etDetailBirth.text.toString().toInt()
 
                         binding.tvDetailName.text = contact?.name
-                        binding.tvDetailAge.text = FormatUtils.returnAge(contact?.date.toString().toInt())
+                        binding.tvDetailAge.text =
+                            FormatUtils.returnAge(contact?.date.toString().toInt())
                         //오류나는 부분
                         selectedImageUri?.let { uri ->
                             contact?.userImage = uri.toString().toInt()
                         }
-
                         isEditable = false
                         enableEditTextFields(false)
                         binding.btnDetailSave.text = "EDIT"
-
                     }
                     setNegativeButton("아니요", null)
                     show()
-
                 }
+            }
+        }
+    }
+
+    private fun viewDetailFragmentInfo() {
+        var heart = contact?.heart
+        // 라이브데이터에 contact.heart 저장
+        if (heart != null) {
+            viewModel.setData(heart)
+        }
+        contact?.let { contact ->
+            binding.apply {
+                etDetailName.setText(contact.name)
+                etDetailPhoneNumber.setText(FormatUtils.formatNumber(contact.number))
+                etDetailBirth.setText(contact.date.toString())
+                etDetailEmail.setText(contact.email)
+                ivDetailProfile.setImageResource(contact.userImage)
+                tvDetailAge.text = FormatUtils.returnAge(contact.date)
+                tvDetailName.text = contact.name
+
+                // 클릭시 뷰모델의 라이브데이터에 Not을 입력
+                btnDetailHeart.setOnClickListener {
+                    heart = heart?.not()
+                    heart?.let { it1 -> viewModel.setData(it1) }
+                    contact.heart = heart == true
+                }
+
+                // 라이브 데이터를 가져와서 이미지 세팅
+                val observer = Observer<Boolean> {
+                    if (it) {
+                        btnDetailHeart.setImageResource(R.drawable.ic_heart_filled)
+                    } else {
+                        btnDetailHeart.setImageResource(R.drawable.ic_heart)
+                    }
+                }
+                viewModel.liveData.observe(viewLifecycleOwner, observer)
+                tvDetailAge.text = FormatUtils.returnAge(contact.date)
             }
         }
     }
@@ -172,7 +173,7 @@ class ContactDetailFragment : Fragment() {
             etDetailBirth.isEnabled = isEnabled
             etDetailEmail.isEnabled = isEnabled
             etDetailPhoneNumber.isEnabled = isEnabled
-            ivDetailProfile.isEnabled=isEnabled
+            ivDetailProfile.isEnabled = isEnabled
         }
     }
 
