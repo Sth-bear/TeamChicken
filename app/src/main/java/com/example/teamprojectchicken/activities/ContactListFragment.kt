@@ -46,10 +46,12 @@ class ContactListFragment : Fragment() {
         with(binding.rvListList) {
             adapter = contactListAdapter
             if (viewModel.getType() == 1) {
+                binding.ivSet.setImageResource(R.drawable.ic_list)
                 layoutManager = LinearLayoutManager(requireContext())
                 itemTouch.attachToRecyclerView(this)
             } else {
                 layoutManager = GridLayoutManager(requireContext(),4)
+                binding.ivSet.setImageResource(R.drawable.ic_grid)
             }
         }
 
@@ -79,6 +81,7 @@ class ContactListFragment : Fragment() {
                     with(binding.rvListList) {
                         adapter = contactListAdapter
                         layoutManager = GridLayoutManager(requireContext(), 4)
+                        binding.ivSet.setImageResource(R.drawable.ic_grid)
                     }
                 } else {
                     viewModel.setType()
@@ -86,6 +89,7 @@ class ContactListFragment : Fragment() {
                         contactListAdapter.viewType = viewModel.getType()
                         adapter = contactListAdapter
                         layoutManager = LinearLayoutManager(requireContext())
+                        binding.ivSet.setImageResource(R.drawable.ic_list)
                         itemTouch.attachToRecyclerView(this)
                     }
                 }
