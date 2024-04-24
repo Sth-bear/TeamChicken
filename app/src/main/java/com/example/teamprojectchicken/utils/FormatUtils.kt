@@ -1,5 +1,6 @@
 package com.example.teamprojectchicken.utils
 
+import java.text.DecimalFormat
 import java.time.LocalDate
 
 object FormatUtils {
@@ -27,4 +28,33 @@ object FormatUtils {
         return "${age} years young"
     }
 
+    fun checkPhoneNumber(number:String): Int{
+        val input = number.drop(1)
+        val formatted = input.replace("-","")
+        if (!formatted.all{it.isDigit()}) {
+            return -1
+        }
+        if (formatted.length != 10) {
+            return -1
+        }
+        return formatted.toInt()
+    }
+
+    fun checkDate(date:String): Int{
+        val delDash = date.replace("-","")
+        val formatted = delDash.replace(".","")
+        if (!formatted.all { it.isDigit() }) {
+            return -1
+        }
+        if (formatted.length != 8) {
+            return -1
+        }
+        return formatted.toInt()
+    }
+
+    fun formatDate(date:Int):String {
+        val formatted = "%18d".format(date)
+        val format = DecimalFormat("####.##.##")
+        return format.format(formatted)
+    }
 }

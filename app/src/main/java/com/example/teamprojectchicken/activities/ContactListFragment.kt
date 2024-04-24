@@ -1,6 +1,8 @@
 package com.example.teamprojectchicken.activities
 
 import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,7 +11,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
@@ -31,7 +35,14 @@ class ContactListFragment : Fragment() {
         contactListAdapter.contactList = list
         with(binding.rvListList) {
             adapter = contactListAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+            if (viewModel.getType() == 1) {
+                binding.ivSet.setImageResource(R.drawable.ic_list)
+                layoutManager = LinearLayoutManager(requireContext())
+                itemTouch.attachToRecyclerView(this)
+            } else {
+                layoutManager = GridLayoutManager(requireContext(),4)
+                binding.ivSet.setImageResource(R.drawable.ic_grid)
+            }
         }
 
         addContact()
@@ -60,6 +71,7 @@ class ContactListFragment : Fragment() {
                     with(binding.rvListList) {
                         adapter = contactListAdapter
                         layoutManager = GridLayoutManager(requireContext(), 4)
+                        binding.ivSet.setImageResource(R.drawable.ic_grid)
                     }
                 } else {
                     viewModel.setType()
@@ -67,6 +79,8 @@ class ContactListFragment : Fragment() {
                         contactListAdapter.viewType = viewModel.getType()
                         adapter = contactListAdapter
                         layoutManager = LinearLayoutManager(requireContext())
+                        binding.ivSet.setImageResource(R.drawable.ic_list)
+                        itemTouch.attachToRecyclerView(this)
                     }
                 }
             }
@@ -117,5 +131,27 @@ class ContactListFragment : Fragment() {
             alertDialog.show()
         }
     }
+
+    val itemTouch = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            return false
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            val position = viewHolder.adapterPosition
+            val phoneNumber = DataSource.getDataSource().getContactList()[position].number
+            val intent = Intent(Intent.ACTION_DIAL).apply {
+                data = Uri.parse("tel:0$phoneNumber")
+            }
+            viewHolder.itemView.context.startActivity(intent)
+
+            viewHolder.itemView.translationX = 0f // 아이템이 사라지는 마술
+            contactListAdapter.notifyDataSetChanged()
+        }
+    })
 
 }
