@@ -12,6 +12,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.example.teamprojectchicken.databinding.FragmentMyPageBinding
+import com.example.teamprojectchicken.utils.FormatUtils
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,13 +38,14 @@ class MyPageFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
 
         }
-        editInfo()
         photoPickerLauncher =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
                 uri?.let {
                     binding.ivMyProfile.setImageURI(uri)
                 }
             }
+
+        editMyInfo()
         editProfileImage()
     }
 
@@ -63,8 +65,8 @@ class MyPageFragment : Fragment() {
         return binding.root
     }
 
-    //정보 수정하는 부분
-    fun editInfo() {
+    //정보 수정하는 부분 0424 함수명 변경 editInfo -> editMyInfo
+    fun editMyInfo() {
         var isEditable = false
         binding.btnMySave.setOnClickListener {
             if (!isEditable) {
@@ -88,6 +90,11 @@ class MyPageFragment : Fragment() {
                         val newBirth = binding.etMyBirth.text.toString()
                         val newEmail = binding.etMyEmail.text.toString()
                         val newPhoneNumber = binding.etMyPhoneNumber.text.toString()
+
+
+                        binding.tvMyName.text = newName
+                        binding.tvMyAge.text = FormatUtils.returnAge(newBirth.toInt())
+
                         binding.etMyName.isEnabled = false
                         binding.etMyBirth.isEnabled = false
                         binding.etMyEmail.isEnabled = false
@@ -101,14 +108,11 @@ class MyPageFragment : Fragment() {
                         binding.etMyEmail.setTextColor(Color.parseColor("#E3E3E3"))
                         binding.etMyPhoneNumber.setTextColor(Color.parseColor("#E3E3E3"))
                     }
-                    setNegativeButton("아니오", null)
+                    setNegativeButton("아니요", null)
                     show()
                 }
             }
-
         }
-
-
     }
 
     companion object {
