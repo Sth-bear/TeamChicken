@@ -3,7 +3,6 @@ package com.example.teamprojectchicken.activities
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,9 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.activities.ContactListFragment.Companion.list
 import com.example.teamprojectchicken.adapters.ContactHeartAdapter
-import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.FragmentHeartBinding
+import com.example.teamprojectchicken.utils.FormatUtils.searchFilter
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
 
 class HeartFragment : Fragment() {
@@ -83,7 +82,8 @@ class HeartFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                filter(newText)
+                contactHeartAdapter.contactList = searchFilter(newText)
+                contactHeartAdapter.notifyDataSetChanged()
                 return true
             }
         })
@@ -94,17 +94,6 @@ class HeartFragment : Fragment() {
         contactHeartAdapter.notifyDataSetChanged()
     }
 
-    private fun filter(text:String?) {
-        val searchText = text?.replace("-","")
-        val filteredList = ArrayList<Contact>()
-        for(item in list) {
-            if(item.name.contains(searchText?:"") || "0${item.number}".contains(searchText?:"")) {
-                filteredList.add(item)
-            }
-        }
-        contactHeartAdapter.contactList = filteredList
-        contactHeartAdapter.notifyDataSetChanged()
-    }
 
     val itemTouch = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
         override fun onMove(

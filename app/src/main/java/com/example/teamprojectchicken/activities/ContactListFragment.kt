@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +22,7 @@ import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.AddcontactDialogBinding
 import com.example.teamprojectchicken.databinding.FragmentContactListBinding
+import com.example.teamprojectchicken.utils.FormatUtils.searchFilter
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
 class ContactListFragment : Fragment() {
     private val binding by lazy { FragmentContactListBinding.inflate(layoutInflater) }
@@ -113,22 +113,11 @@ class ContactListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                filter(newText)
+                contactListAdapter.contactList = searchFilter(newText)
+                contactListAdapter.notifyDataSetChanged()
                 return true
             }
         })
-    }
-
-    private fun filter(text : String?) {
-        val searchText = text?.replace("-","")
-        val filteredList = ArrayList<Contact>()
-        for(item in list) {
-            if(item.name.contains(searchText?:"") || "0${item.number}".contains(searchText?:"")) {
-                filteredList.add(item)
-            }
-        }
-        contactListAdapter.contactList = filteredList
-        contactListAdapter.notifyDataSetChanged()
     }
 
     override fun onPause() {
