@@ -7,6 +7,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.Uri
@@ -17,8 +19,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -119,8 +119,8 @@ class ContactListFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onPause() {
+        super.onPause()
         contactListAdapter.notifyItemRangeChanged(0, list.size)
     }
     // 연락처 추가 다이얼로그
@@ -130,6 +130,7 @@ class ContactListFragment : Fragment() {
             val alertDialog: AlertDialog = builder.create()
             val binding: AddcontactDialogBinding = AddcontactDialogBinding.inflate(layoutInflater)
             alertDialog.setView(binding.root)
+            alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
             binding.dlBtnCancel.setOnClickListener {
                 alertDialog.dismiss()

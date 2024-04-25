@@ -72,8 +72,7 @@
                     android:background="#00FFFFFF"
                     android:src="@drawable/ic_heart"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="#D1D1D1" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_detail_profile"
