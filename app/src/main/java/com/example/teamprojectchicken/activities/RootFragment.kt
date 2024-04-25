@@ -15,14 +15,12 @@ class RootFragment : Fragment() {
         arguments?.let {
         }
     }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        if (childFragmentManager.findFragmentById(R.id.root_frag)==null){
-            childFragmentManager.beginTransaction().apply {
-                replace(R.id.root_frag, ContactListFragment())
-                addToBackStack(null)
-                commit()
-            }
+
+    override fun onStart() {
+        super.onStart()
+        childFragmentManager.beginTransaction().apply {
+            replace(R.id.root_frag, ContactListFragment())
+            commit()
         }
     }
 
@@ -30,7 +28,6 @@ class RootFragment : Fragment() {
         super.onPause()
         childFragmentManager.beginTransaction().apply {
             replace(R.id.root_frag, ContactListFragment())
-            addToBackStack(null)
             commit()
         }
     }

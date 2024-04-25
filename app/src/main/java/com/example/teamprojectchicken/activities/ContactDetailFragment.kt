@@ -21,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import com.example.teamprojectchicken.R
+import com.example.teamprojectchicken.adapters.ViewPagerAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.utils.FormatUtils
@@ -127,6 +128,7 @@ class ContactDetailFragment : Fragment() {
                 }
                 viewModel.liveData.observe(viewLifecycleOwner, observer)
                 tvDetailAge.text = FormatUtils.returnAge(contact.date)
+                Log.d("parentFrag", "${parentFragment?.javaClass}")
             }
         }
     }
@@ -136,6 +138,7 @@ class ContactDetailFragment : Fragment() {
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 parentFragmentManager.popBackStack()
+                parentFragment?.onStart()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
