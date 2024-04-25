@@ -10,26 +10,19 @@ import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.ItemRvContactList2Binding
 import com.example.teamprojectchicken.databinding.ItemRvContactListBinding
 import com.example.teamprojectchicken.utils.FormatUtils
+import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_GRID
+import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_LINEAR
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
 
 class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var contactList = mutableListOf<Contact>()
     var viewType:Int = ContactViewModel().getType()
 
-    companion object{
-        const val VIEW_TYPE_LINEAR = 1
-        const val VIEW_TYPE_GRID = 2
-    }
-
     interface ItemClick {
         fun onClick(view:View, position: Int, contact: Contact)
-    }
-    var itemClick: ItemClick? = null
-
-    interface LongClick {
         fun longClick(position: Int)
     }
-    var longClick: LongClick? = null
+    var itemClick: ItemClick? = null
 
     fun removeItem(position: Int) {
         contactList.removeAt(position)
@@ -69,7 +62,7 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
 
         holder.itemView.setOnLongClickListener {
-            longClick?.longClick(position)
+            itemClick?.longClick(position)
             false
         }
 
@@ -127,5 +120,10 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
         var image = binding.ivItemRvUser
+    }
+
+    fun submitList(items: MutableList<Contact>) {
+        this.contactList = items.sortedBy { it.name }.toMutableList()
+        notifyDataSetChanged()
     }
 }

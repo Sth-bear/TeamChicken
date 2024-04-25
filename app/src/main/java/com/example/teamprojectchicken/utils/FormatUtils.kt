@@ -75,4 +75,8 @@ object FormatUtils {
     fun showToast(context: Context, text:String) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
+
+    const val VIEW_TYPE_LINEAR = 1
+    const val VIEW_TYPE_GRID = 2
+
 }
