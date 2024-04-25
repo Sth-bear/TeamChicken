@@ -81,10 +81,10 @@ class MyPageFragment : Fragment() {
                         val newPhoneNumber = FormatUtils.checkPhoneNumber(binding.etMyPhoneNumber.text.toString())
                         val fragView = this@MyPageFragment.requireView()
                         if (newName.isBlank()) {
-                            FormatUtils.showSnackBar(fragView,"이름을 입력해주세요.")
+                            FormatUtils.showToast(context,"이름을 입력해주세요.")
                             return@setPositiveButton
                         }
-                        if (FormatUtils.checkFormat(fragView,newBirth,newPhoneNumber)) {
+                        if (FormatUtils.checkFormat(context,newBirth,newPhoneNumber)) {
                             return@setPositiveButton
                         }
 
