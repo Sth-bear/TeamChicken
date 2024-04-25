@@ -128,4 +128,9 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
         var image = binding.ivItemRvUser
     }
+
+    fun submitList(items: MutableList<Contact>) {
+        this.contactList = items
+        notifyDataSetChanged()
+    }
 }

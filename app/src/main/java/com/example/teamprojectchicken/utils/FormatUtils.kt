@@ -3,6 +3,8 @@ package com.example.teamprojectchicken.utils
 import android.view.View
 import com.example.teamprojectchicken.activities.ContactListFragment
 import com.example.teamprojectchicken.data.Contact
+import com.example.teamprojectchicken.data.DataSource
+import com.example.teamprojectchicken.viewmodels.ConViewModel
 import com.google.android.material.snackbar.Snackbar
 import java.time.LocalDate
 
@@ -82,7 +84,7 @@ object FormatUtils {
     fun searchFilter(text : String?): ArrayList<Contact> {
         val searchText = text?.replace("-","")
         val filteredList = ArrayList<Contact>()
-        for(item in ContactListFragment.list) {
+        for(item in ConViewModel(dataSource = DataSource.getDataSource()).contactLiveData.value?: mutableListOf()) {
             if(item.name.contains(searchText?:"") || "0${item.number}".contains(searchText?:"")) {
                 filteredList.add(item)
             }

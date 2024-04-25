@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
-import com.example.teamprojectchicken.activities.ContactListFragment.Companion.list
 import com.example.teamprojectchicken.adapters.ContactHeartAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
@@ -32,7 +31,6 @@ class HeartFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         // 초기 어댑터 설정과 데이터 설정
-        contactHeartAdapter.contactList = list
         with(binding.rvHeartList) {
             adapter = contactHeartAdapter
             layoutManager = LinearLayoutManager(requireContext())

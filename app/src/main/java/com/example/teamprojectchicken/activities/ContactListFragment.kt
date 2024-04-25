@@ -13,44 +13,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ContactListAdapter
+import com.example.teamprojectchicken.adapters.ContactListAdapter.Companion.VIEW_TYPE_LINEAR
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.AddcontactDialogBinding
 import com.example.teamprojectchicken.databinding.FragmentContactListBinding
 import com.example.teamprojectchicken.utils.FormatUtils.searchFilter
+import com.example.teamprojectchicken.viewmodels.ConViewModel
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
+import com.example.teamprojectchicken.viewmodels.ContactViewModelFactory
+
 class ContactListFragment : Fragment() {
     private val binding by lazy { FragmentContactListBinding.inflate(layoutInflater) }
     private val viewModel = ContactViewModel()
+    private val conViewModel by viewModels<ConViewModel> {
+        ContactViewModelFactory()
+    }
     val contactListAdapter by lazy {
         ContactListAdapter()
-    }
-    companion object {
-        var list: MutableList<Contact> = DataSource.getDataSource().getContactList()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        contactListAdapter.contactList = list
-        with(binding.rvListList) {
-            adapter = contactListAdapter
-            if (viewModel.getType() == 1) {
-                binding.ivSet.setImageResource(R.drawable.ic_list)
-                layoutManager = LinearLayoutManager(requireContext())
-                itemTouch.attachToRecyclerView(this)
-            } else {
-                layoutManager = GridLayoutManager(requireContext(),4)
-                binding.ivSet.setImageResource(R.drawable.ic_grid)
-            }
-        }
-
-        addContact()
     }
 
     override fun onCreateView(
@@ -62,16 +50,18 @@ class ContactListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeLiveData()
         longClick()
+        addContact()
         with(binding.rvListList) {
             adapter = contactListAdapter
-            layoutManager = if (viewModel.getType() == 1) {
+            layoutManager = if (viewModel.getType() == VIEW_TYPE_LINEAR) {
                 LinearLayoutManager(requireContext())
             } else {
                 GridLayoutManager(requireContext(),4)
             }
             binding.ivSet.setOnClickListener {
-                if (viewModel.getType() == 1) {
+                if (viewModel.getType() == VIEW_TYPE_LINEAR) {
                     viewModel.setType()
                     contactListAdapter.viewType = viewModel.getType()
                     with(binding.rvListList) {
@@ -115,16 +105,15 @@ class ContactListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                contactListAdapter.contactList = searchFilter(newText)
-                contactListAdapter.notifyDataSetChanged()
+                contactListAdapter.submitList(searchFilter(newText))
                 return true
             }
         })
     }
 
-    override fun onPause() {
-        super.onPause()
-        contactListAdapter.notifyItemRangeChanged(0, list.size)
+    override fun onResume() {
+        super.onResume()
+        observeLiveData()
     }
     // 연락처 추가 다이얼로그
     private fun addContact() {
@@ -145,8 +134,7 @@ class ContactListFragment : Fragment() {
                 if (name.isNotEmpty() && number.isNotEmpty() && email.isNotEmpty()) {
                     try {
                         if (number.toInt() is Int) {
-                            contactListAdapter.contactList.add(
-                                Contact(
+                            val newContact = Contact(
                                     name = name,
                                     number = number.toInt(),
                                     email = email,
@@ -155,8 +143,7 @@ class ContactListFragment : Fragment() {
                                     heart = false,
                                     uri = null
                                 )
-                            )
-                            contactListAdapter.notifyDataSetChanged()
+                            conViewModel.addContact(newContact)
                             Toast.makeText(requireContext(), "연락처를 추가했습니다.", Toast.LENGTH_SHORT).show()
                             alertDialog.dismiss()
                         }
@@ -204,13 +191,42 @@ class ContactListFragment : Fragment() {
                 val listener = DialogInterface.OnClickListener { p0, p1 ->
                     // 다이얼로그 인터페이스 생성, 버튼 클릭시 처리 이벤트
                     if (p1 == DialogInterface.BUTTON_POSITIVE ) {
-                        contactListAdapter.removeItem(position)
+                        conViewModel.removeContact(position)
                         Toast.makeText(requireContext(), "연락처 삭제 완료", Toast.LENGTH_SHORT).show()
                     }
                 }
                 builder.setPositiveButton("확인", listener)
                 builder.setNegativeButton("취소", null)
                 builder.show()
+            }
+        }
+    }
+
+    private fun observeLiveData() {
+        conViewModel.contactLiveData.observe(viewLifecycleOwner, Observer { contactList ->
+            contactListAdapter.submitList(contactList)
+        })
+    }
+
+    private fun switchLinearToGrid() {
+        binding.ivSet.setOnClickListener {
+            if (viewModel.getType() == VIEW_TYPE_LINEAR) {
+                viewModel.setType()
+                contactListAdapter.viewType = viewModel.getType()
+                with(binding.rvListList) {
+                    adapter = contactListAdapter
+                    layoutManager = GridLayoutManager(requireContext(), 4)
+                    binding.ivSet.setImageResource(R.drawable.ic_grid)
+                }
+            } else {
+                viewModel.setType()
+                with(binding.rvListList) {
+                    contactListAdapter.viewType = viewModel.getType()
+                    adapter = contactListAdapter
+                    layoutManager = LinearLayoutManager(requireContext())
+                    binding.ivSet.setImageResource(R.drawable.ic_list)
+                    itemTouch.attachToRecyclerView(this)
+                }
             }
         }
     }

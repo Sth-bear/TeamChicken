@@ -14,6 +14,6 @@ class DataSource {
     }
 
     fun getContactList(): MutableList<Contact> {
-        return contactList()
+        return contactList().sortedBy { it.name }.toMutableList()
     }
 }
