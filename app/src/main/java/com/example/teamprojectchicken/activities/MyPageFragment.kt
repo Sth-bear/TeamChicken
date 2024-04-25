@@ -10,22 +10,15 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.graphics.toColor
 import androidx.fragment.app.Fragment
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.databinding.FragmentMyPageBinding
 import com.example.teamprojectchicken.utils.FormatUtils
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MyPageFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MyPageFragment : Fragment() {
     private lateinit var photoPickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
 
@@ -82,16 +75,28 @@ class MyPageFragment : Fragment() {
                     setMessage("정보수정을 완료하시겠습니까?")
                     setPositiveButton("예") { dialog, which ->
                         val newName = binding.etMyName.text.toString()
-                        val newBirth = binding.etMyBirth.text.toString()
+                        val newBirth = FormatUtils.checkDate(binding.etMyBirth.text.toString())
                         val newEmail = binding.etMyEmail.text.toString()
-                        val newPhoneNumber = binding.etMyPhoneNumber.text.toString()
+                        val newPhoneNumber = FormatUtils.checkPhoneNumber(binding.etMyPhoneNumber.text.toString())
+                        val fragView = this@MyPageFragment.requireView()
+                        if (newName.isBlank()) {
+                            FormatUtils.showSnackBar(fragView,"이름을 입력해주세요.")
+                            return@setPositiveButton
+                        }
+                        if (FormatUtils.checkFormat(fragView,newBirth,newPhoneNumber)) {
+                            return@setPositiveButton
+                        }
 
                         binding.apply {
                             tvMyName.text = newName
-                            tvMyAge.text = FormatUtils.returnAge(newBirth.toInt())
-                            tvMyEmailTitle.text = newEmail
-                            tvMyPhoneNumberTitle.text = newPhoneNumber
+                            tvMyAge.text = FormatUtils.returnAge(newBirth)
+                            etMyEmail.setText(newEmail)
+                            etMyName.setText(newEmail)
+                            etMyBirth.setText(FormatUtils.formatDate(newBirth))
+                            etMyPhoneNumber.setText(FormatUtils.formatNumber(newPhoneNumber))
                         }
+
+                        // 상태 업데이트
                         isEditable = false
                         enableEditTextFieldsInMyPage(false)
 
@@ -105,6 +110,16 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    companion object {
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            MyPageFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
+    }
 
     // edit눌렀을 때 editext 상태 변경
     private fun enableEditTextFieldsInMyPage(isEnabled: Boolean){

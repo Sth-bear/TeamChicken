@@ -1,6 +1,7 @@
 package com.example.teamprojectchicken.utils
 
-import java.text.DecimalFormat
+import android.view.View
+import com.google.android.material.snackbar.Snackbar
 import java.time.LocalDate
 
 object FormatUtils {
@@ -53,8 +54,25 @@ object FormatUtils {
     }
 
     fun formatDate(date:Int):String {
-        val formatted = "%18d".format(date)
-        val format = DecimalFormat("####.##.##")
-        return format.format(formatted)
+        val formatted = date.toString()
+        return "${formatted.substring(0,4)}.${formatted.substring(4,6)}.${formatted.substring(6)}"
+    }
+
+    fun checkFormat(view : View, vararg formatted: Int):Boolean {
+        formatted.forEach {
+            if (it == -1) {
+                showSnackBar(view,"정확한 값을 입력해주세요")
+                return true
+            }
+        }
+        return false
+    }
+
+     fun showSnackBar(view: View, text:String) {
+        val snackbar = Snackbar.make(view,"${text}",Snackbar.LENGTH_SHORT)
+        snackbar.setAction("확인") {
+            snackbar.dismiss()
+        }
+        snackbar.show()
     }
 }
