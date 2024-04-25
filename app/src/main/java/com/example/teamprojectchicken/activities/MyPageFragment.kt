@@ -86,10 +86,12 @@ class MyPageFragment : Fragment() {
                         val newEmail = binding.etMyEmail.text.toString()
                         val newPhoneNumber = binding.etMyPhoneNumber.text.toString()
 
-                        binding.tvMyName.text = newName
-                        binding.tvMyAge.text = FormatUtils.returnAge(newBirth.toInt())
-
-                        // 상태 업데이트
+                        binding.apply {
+                            tvMyName.text = newName
+                            tvMyAge.text = FormatUtils.returnAge(newBirth.toInt())
+                            tvMyEmailTitle.text = newEmail
+                            tvMyPhoneNumberTitle.text = newPhoneNumber
+                        }
                         isEditable = false
                         enableEditTextFieldsInMyPage(false)
 

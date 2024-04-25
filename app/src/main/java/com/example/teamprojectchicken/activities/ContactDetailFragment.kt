@@ -79,7 +79,6 @@ class ContactDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentContactDetailBinding.inflate(inflater, container, false)
         editUserInfo()
-        Log.d("log_변경전","$contact")
         return binding.root
     }
 
@@ -174,9 +173,7 @@ class ContactDetailFragment : Fragment() {
                     setPositiveButton("예") { dialog, which ->
                         contact?.name = binding.etDetailName.text.toString()
                         contact?.email = binding.etDetailEmail.text.toString()
-                        // contact?.number = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
                         contact?.date = binding.etDetailBirth.text.toString().toInt()
-                        Log.d("uri_", "${contact?.uri}, $imageUri")
                         binding.tvDetailName.text = contact?.name
                         binding.tvDetailAge.text = FormatUtils.returnAge(contact?.date.toString().toInt())
 
