@@ -105,5 +105,8 @@ class ContactHeartAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    fun
+    fun submitList(items: MutableList<Contact>) {
+        this.contactList = items.sortedBy { it.name }.toMutableList()
+        notifyDataSetChanged()
+    }
 }

@@ -1,10 +1,8 @@
 package com.example.teamprojectchicken.viewmodels
 
-import android.util.MutableInt
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.teamprojectchicken.data.Contact
 
 class ContactViewModel(): ViewModel() {
     private var data = MutableLiveData<Boolean>()
