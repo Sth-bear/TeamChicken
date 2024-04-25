@@ -1,6 +1,5 @@
 package com.example.teamprojectchicken.adapters
 
-import androidx.core.os.persistableBundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
