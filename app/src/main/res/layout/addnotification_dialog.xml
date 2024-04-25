@@ -90,7 +90,7 @@
         android:layout_marginTop="32dp"
         android:text="저장"
         android:background="@drawable/tablayout_radius"
-        android:backgroundTint="#E1E1E1"
+        android:backgroundTint="@color/mainColor"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
