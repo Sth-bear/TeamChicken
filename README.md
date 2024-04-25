@@ -103,9 +103,9 @@
 
 <br>
 
-|연락처 목록|연락처 수정|
-|---|---|
-|<img src="https://github.com/Sth-bear/TeamChicken/assets/141006937/f4867eed-66d5-4aac-91b6-d17921502e47" width=350px>|<img src="https://github.com/Sth-bear/TeamChicken/assets/141006937/86bdb465-ad7c-4d50-aedb-508c95eb9531" width=350px>|
+|연락처 목록|연락처 수정|연락처 삭제|
+|---|---|---|
+|<img src="https://github.com/Sth-bear/TeamChicken/assets/141006937/f4867eed-66d5-4aac-91b6-d17921502e47" width=220px>|<img src="https://github.com/Sth-bear/TeamChicken/assets/141006937/86bdb465-ad7c-4d50-aedb-508c95eb9531" width=220px>|<img src="https://github.com/Sth-bear/TeamChicken/assets/141006937/24304075-28ab-41c6-8740-f7ad6a69e1af" width=220px>|
 
 - **사용자의 연락처 리스트 출력**
 - **View Pager + RecyclerView**를 사용하여 리스트를 출력
