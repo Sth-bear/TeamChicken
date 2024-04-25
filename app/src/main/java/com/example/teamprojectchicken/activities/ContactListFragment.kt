@@ -119,10 +119,11 @@ class ContactListFragment : Fragment() {
         })
     }
 
-    private fun filter(searchText : String?) {
+    private fun filter(text : String?) {
+        val searchText = text?.replace("-","")
         val filteredList = ArrayList<Contact>()
         for(item in list) {
-            if(item.name.contains(searchText?:"")) {
+            if(item.name.contains(searchText?:"") || "0${item.number}".contains(searchText?:"")) {
                 filteredList.add(item)
             }
         }

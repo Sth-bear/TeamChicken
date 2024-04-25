@@ -86,10 +86,11 @@ class HeartFragment : Fragment() {
         contactHeartAdapter.notifyDataSetChanged()
     }
 
-    private fun filter(serchText:String?) {
+    private fun filter(text:String?) {
+        val searchText = text?.replace("-","")
         val filteredList = ArrayList<Contact>()
         for(item in list) {
-            if (item.heart == true && item.name.contains(serchText?: "")) {
+            if (item.heart == true && item.name.contains(searchText?: "")) {
                 filteredList.add(item)
             }
         }
