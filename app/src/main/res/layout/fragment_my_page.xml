@@ -225,6 +225,21 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
     </ScrollView>
 
+    <ImageView
+        android:id="@+id/iv_my_profileBig"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:background="#00FFFFFF"
+        android:src="@drawable/mypagerofile"
+        app:civ_border_color="#9A9A9A"
+        app:civ_border_width="2dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

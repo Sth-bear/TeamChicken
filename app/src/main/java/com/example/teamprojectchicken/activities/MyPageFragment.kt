@@ -23,6 +23,7 @@ class MyPageFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private val binding by lazy { FragmentMyPageBinding.inflate(layoutInflater) }
+    private var editMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +46,10 @@ class MyPageFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        binding.ivMyProfile.setOnClickListener {
-            launchPhotoPicker()
-        }
         binding.btnMySave.setOnClickListener {
+            binding.ivMyProfile.setOnClickListener {
+                launchPhotoPicker()
+            }
             handleSaveButton()
         }
     }
@@ -64,6 +65,7 @@ class MyPageFragment : Fragment() {
         } else {
             toggleEditMode()
         }
+        editMode = true
     }
 
     private fun isEditable(): Boolean {
@@ -77,6 +79,7 @@ class MyPageFragment : Fragment() {
             setPositiveButton("예") { dialog, which ->
                if(handleUserInfoChanges()){
                 toggleEditMode()}
+                binding.ivMyProfile.isClickable = false
             }
             setNegativeButton("아니오", null)
             show()
