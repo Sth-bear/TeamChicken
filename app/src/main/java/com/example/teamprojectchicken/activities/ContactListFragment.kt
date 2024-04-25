@@ -11,7 +11,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +29,7 @@ import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.AddcontactDialogBinding
 import com.example.teamprojectchicken.databinding.FragmentContactListBinding
+import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_LINEAR
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
 class ContactListFragment : Fragment() {
     private val binding by lazy { FragmentContactListBinding.inflate(layoutInflater) }
@@ -41,24 +41,6 @@ class ContactListFragment : Fragment() {
         var list: MutableList<Contact> = DataSource.getDataSource().getContactList()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        contactListAdapter.contactList = list
-        with(binding.rvListList) {
-            adapter = contactListAdapter
-            if (viewModel.getType() == 1) {
-                binding.ivSet.setImageResource(R.drawable.ic_list)
-                layoutManager = LinearLayoutManager(requireContext())
-                itemTouch.attachToRecyclerView(this)
-            } else {
-                layoutManager = GridLayoutManager(requireContext(),4)
-                binding.ivSet.setImageResource(R.drawable.ic_grid)
-            }
-        }
-
-        addContact()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,52 +50,96 @@ class ContactListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        longClick()
+        contactListAdapter.submitList(list)
+        bind()
+        addContact()
+        ivSetOnClick()
+        itemOnClick()
+        searchContact()
+    }
 
+    private fun bind() {
         with(binding.rvListList) {
             adapter = contactListAdapter
-            layoutManager = if (viewModel.getType() == 1) {
-                LinearLayoutManager(requireContext())
+            if (viewModel.getType() == VIEW_TYPE_LINEAR) {
+                binding.ivSet.setImageResource(R.drawable.ic_list)
+                layoutManager = LinearLayoutManager(requireContext())
+                itemTouch.attachToRecyclerView(this)
             } else {
-                GridLayoutManager(requireContext(),4)
-            }
-            binding.ivSet.setOnClickListener {
-                if (viewModel.getType() == 1) {
-                    viewModel.setType()
-                    contactListAdapter.viewType = viewModel.getType()
-                    with(binding.rvListList) {
-                        adapter = contactListAdapter
-                        layoutManager = GridLayoutManager(requireContext(), 4)
-                        binding.ivSet.setImageResource(R.drawable.ic_grid)
-                    }
-                } else {
-                    viewModel.setType()
-                    with(binding.rvListList) {
-                        contactListAdapter.viewType = viewModel.getType()
-                        adapter = contactListAdapter
-                        layoutManager = LinearLayoutManager(requireContext())
-                        binding.ivSet.setImageResource(R.drawable.ic_list)
-                        itemTouch.attachToRecyclerView(this)
-                    }
-                }
-            }
-            contactListAdapter.itemClick = object : ContactListAdapter.ItemClick {
-                override fun onClick(view: View, position: Int, contact: Contact) {
-                    val fragment = ContactDetailFragment.newInstance(contact)
-                    parentFragmentManager.beginTransaction()
-                        .setCustomAnimations(
-                            R.anim.fade_in,
-                            R.anim.fade_out,
-                            R.anim.fade_in,
-                            R.anim.fade_out
-                        )
-                        .replace(R.id.root_frag, fragment)
-                        .addToBackStack(null)
-                        .commit()
-                }
-
+                layoutManager = GridLayoutManager(requireContext(),4)
+                binding.ivSet.setImageResource(R.drawable.ic_grid)
             }
         }
+    }
+
+    private fun ivSetOnClick() {
+        binding.ivSet.setOnClickListener {
+            if (viewModel.getType() == VIEW_TYPE_LINEAR) {
+                viewModel.setType()
+                contactListAdapter.viewType = viewModel.getType()
+                gridLayout()
+            } else {
+                viewModel.setType()
+                linearLayout()
+            }
+        }
+    }
+    private fun linearLayout() {
+        with(binding.rvListList) {
+            contactListAdapter.viewType = viewModel.getType()
+            adapter = contactListAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            binding.ivSet.setImageResource(R.drawable.ic_list)
+            itemTouch.attachToRecyclerView(this)
+        }
+    }
+    private fun gridLayout() {
+        with(binding.rvListList) {
+            adapter = contactListAdapter
+            layoutManager = GridLayoutManager(requireContext(), 4)
+            binding.ivSet.setImageResource(R.drawable.ic_grid)
+        }
+    }
+    private fun itemOnClick() {
+        contactListAdapter.itemClick = object : ContactListAdapter.ItemClick {
+            override fun onClick(view: View, position: Int, contact: Contact) {
+                goToDetailContact(contact)
+            }
+            override fun longClick(position: Int) {
+                delContact(position)
+            }
+        }
+    }
+    private fun goToDetailContact(contact: Contact){
+        val fragment = ContactDetailFragment.newInstance(contact)
+        parentFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.fade_in,
+                R.anim.fade_out,
+                R.anim.fade_in,
+                R.anim.fade_out
+            )
+            .replace(R.id.root_frag, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+    private fun delContact(position:Int) {
+        var builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("연락처 삭제")
+        builder.setMessage("해당 연락처를 삭제합니다.")
+
+        val listener = DialogInterface.OnClickListener { p0, p1 ->
+            // 다이얼로그 인터페이스 생성, 버튼 클릭시 처리 이벤트
+            if (p1 == DialogInterface.BUTTON_POSITIVE ) {
+                contactListAdapter.removeItem(position)
+                Toast.makeText(requireContext(), "연락처 삭제 완료", Toast.LENGTH_SHORT).show()
+            }
+        }
+        builder.setPositiveButton("확인", listener)
+        builder.setNegativeButton("취소", null)
+        builder.show()
+    }
+    private fun searchContact() {
         binding.svListSearch.isSubmitButtonEnabled = true
         binding.svListSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
@@ -127,7 +153,6 @@ class ContactListFragment : Fragment() {
             }
         })
     }
-
     private fun filter(text : String?) {
         val searchText = text?.replace("-","")
         val filteredList = ArrayList<Contact>()
@@ -136,10 +161,8 @@ class ContactListFragment : Fragment() {
                 filteredList.add(item)
             }
         }
-        contactListAdapter.contactList = filteredList
-        contactListAdapter.notifyDataSetChanged()
+        contactListAdapter.submitList(filteredList)
     }
-
     override fun onPause() {
         super.onPause()
         contactListAdapter.notifyItemRangeChanged(0, list.size)
@@ -189,7 +212,6 @@ class ContactListFragment : Fragment() {
         }
     }
 
-
     val itemTouch = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
         override fun onMove(
             recyclerView: RecyclerView,
@@ -211,26 +233,5 @@ class ContactListFragment : Fragment() {
             contactListAdapter.notifyDataSetChanged()
         }
     })
-
-    fun longClick () {
-        contactListAdapter.longClick = object : ContactListAdapter.LongClick {
-            override fun longClick(position: Int) {
-                var builder = AlertDialog.Builder(requireContext())
-                builder.setTitle("연락처 삭제")
-                builder.setMessage("해당 연락처를 삭제합니다.")
-
-                val listener = DialogInterface.OnClickListener { p0, p1 ->
-                    // 다이얼로그 인터페이스 생성, 버튼 클릭시 처리 이벤트
-                    if (p1 == DialogInterface.BUTTON_POSITIVE ) {
-                        contactListAdapter.removeItem(position)
-                        Toast.makeText(requireContext(), "연락처 삭제 완료", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                builder.setPositiveButton("확인", listener)
-                builder.setNegativeButton("취소", null)
-                builder.show()
-            }
-        }
-    }
 
 }
