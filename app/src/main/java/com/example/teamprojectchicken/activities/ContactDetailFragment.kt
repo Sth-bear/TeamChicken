@@ -128,7 +128,6 @@ class ContactDetailFragment : Fragment() {
                 }
                 viewModel.liveData.observe(viewLifecycleOwner, observer)
                 tvDetailAge.text = FormatUtils.returnAge(contact.date)
-                Log.d("parentFrag", "${parentFragment?.javaClass}")
             }
         }
     }
