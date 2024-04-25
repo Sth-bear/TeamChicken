@@ -29,7 +29,6 @@ import com.example.teamprojectchicken.viewmodels.ContactViewModel
 private const val ARG_CONTACT = "contact"
 
 class ContactDetailFragment : Fragment() {
-    private lateinit var photoPickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var callback: OnBackPressedCallback
     private var viewModel = ContactViewModel()
     private var contact: Contact? = null
@@ -37,6 +36,7 @@ class ContactDetailFragment : Fragment() {
     private var imageUri: Uri? = null
     private lateinit var imageView: ImageView
     private val binding get() = _binding!!
+
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
@@ -78,7 +78,6 @@ class ContactDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentContactDetailBinding.inflate(inflater, container, false)
         editUserInfo()
-        Log.d("log_변경전","$contact")
         return binding.root
     }
 

@@ -2,6 +2,8 @@ package com.example.teamprojectchicken.activities
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -116,6 +118,7 @@ class ContactListFragment : Fragment() {
             val alertDialog: AlertDialog = builder.create()
             val binding: AddcontactDialogBinding = AddcontactDialogBinding.inflate(layoutInflater)
             alertDialog.setView(binding.root)
+            alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
             binding.dlBtnCancel.setOnClickListener {
                 alertDialog.dismiss()
