@@ -1,6 +1,7 @@
 package com.example.teamprojectchicken.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,12 @@ class ContactHeartAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         const val VIEW_TYPE_LINEAR = 1
         const val VIEW_TYPE_GRID = 2
     }
+
+    interface ItemClick {
+        fun onClick(view: View, position: Int, contact: Contact)
+    }
+    var itemClick: ItemClick? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType) {
             VIEW_TYPE_LINEAR -> {
@@ -48,6 +55,11 @@ class ContactHeartAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentItem = contactList.filter { it.heart }.toMutableList()[position]
+
+        holder.itemView.setOnClickListener {
+            itemClick?.onClick(it,position, contactList.filter { it.heart }.toMutableList()[position])
+        }
+
         when(holder.itemViewType) {
             VIEW_TYPE_LINEAR -> {
                 (holder as LinearHolder).bind(currentItem)
