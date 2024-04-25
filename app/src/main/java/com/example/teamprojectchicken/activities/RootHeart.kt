@@ -22,14 +22,11 @@ class RootHeart : Fragment() {
         return inflater.inflate(R.layout.fragment_root_heart, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        if (childFragmentManager.findFragmentById(R.id.root2_frag)==null){
-            childFragmentManager.beginTransaction().apply {
-                replace(R.id.root2_frag, HeartFragment())
-                addToBackStack(null)
-                commit()
-            }
+    override fun onStart() {
+        super.onStart()
+        childFragmentManager.beginTransaction().apply {
+            replace(R.id.root2_frag, HeartFragment())
+            commit()
         }
     }
 
@@ -37,7 +34,6 @@ class RootHeart : Fragment() {
         super.onPause()
         childFragmentManager.beginTransaction().apply {
             replace(R.id.root2_frag, HeartFragment())
-            addToBackStack(null)
             commit()
         }
     }

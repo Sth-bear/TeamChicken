@@ -63,6 +63,8 @@ class ContactListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         longClick()
+        recyclerViewAnimation()
+
         with(binding.rvListList) {
             adapter = contactListAdapter
             layoutManager = if (viewModel.getType() == 1) {
@@ -217,6 +219,12 @@ class ContactListFragment : Fragment() {
                 builder.setNegativeButton("취소", null)
                 builder.show()
             }
+        }
+    }
+
+    fun recyclerViewAnimation() {
+        binding.rvListList.apply {
+            itemAnimator = null
         }
     }
 
