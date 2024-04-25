@@ -231,7 +231,7 @@ class ContactListFragment : Fragment() {
                             alertDialog.dismiss()
                         }
                     } catch (e:java.lang.NumberFormatException) {
-                        Toast.makeText(requireContext(), "11자리 이하의 전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "11자리 이하의 숫자를 입력해주세요.", Toast.LENGTH_SHORT).show()
                     }
                 } else if (name.isEmpty() || number.isEmpty()) {
                     Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
