@@ -1,5 +1,7 @@
 package com.example.teamprojectchicken.activities
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,10 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.activities.ContactListFragment.Companion.list
 import com.example.teamprojectchicken.adapters.ContactHeartAdapter
 import com.example.teamprojectchicken.data.Contact
+import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.FragmentHeartBinding
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
 
@@ -57,6 +62,7 @@ class HeartFragment : Fragment() {
                     with(binding.rvHeartList) {
                         adapter = contactHeartAdapter
                         layoutManager = GridLayoutManager(requireContext(), 4)
+                        binding.ivSet.setImageResource(com.example.teamprojectchicken.R.drawable.ic_grid)
                     }
                 } else {
                     viewModel.setType()
@@ -64,6 +70,8 @@ class HeartFragment : Fragment() {
                         contactHeartAdapter.viewType = viewModel.getType()
                         adapter = contactHeartAdapter
                         layoutManager = LinearLayoutManager(requireContext())
+                        binding.ivSet.setImageResource(com.example.teamprojectchicken.R.drawable.ic_list)
+                        itemTouch.attachToRecyclerView(this)
                     }
                 }
             }
@@ -81,8 +89,8 @@ class HeartFragment : Fragment() {
         })
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onPause() {
+        super.onPause()
         contactHeartAdapter.notifyDataSetChanged()
     }
 
@@ -90,12 +98,33 @@ class HeartFragment : Fragment() {
         val searchText = text?.replace("-","")
         val filteredList = ArrayList<Contact>()
         for(item in list) {
-            if (item.heart == true && item.name.contains(searchText?: "")) {
+            if(item.name.contains(searchText?:"") || "0${item.number}".contains(searchText?:"")) {
                 filteredList.add(item)
             }
         }
-        Log.d("test2", "filter: ${filteredList}")
         contactHeartAdapter.contactList = filteredList
         contactHeartAdapter.notifyDataSetChanged()
     }
+
+    val itemTouch = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            return false
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            val position = viewHolder.adapterPosition
+            val phoneNumber = DataSource.getDataSource().getContactList()[position].number
+            val intent = Intent(Intent.ACTION_DIAL).apply {
+                data = Uri.parse("tel:0$phoneNumber")
+            }
+            viewHolder.itemView.context.startActivity(intent)
+
+            viewHolder.itemView.translationX = 0f // 아이템이 사라지는 마술
+            contactHeartAdapter.notifyDataSetChanged()
+        }
+    })
 }
