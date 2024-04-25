@@ -1,14 +1,17 @@
 package com.example.teamprojectchicken.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teamprojectchicken.activities.ContactListFragment.Companion.list
 import com.example.teamprojectchicken.adapters.ContactHeartAdapter
+import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.FragmentHeartBinding
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
 
@@ -65,10 +68,33 @@ class HeartFragment : Fragment() {
                 }
             }
         }
+        binding.svHeartSearch.isSubmitButtonEnabled = true
+        binding.svHeartSearch.setOnQueryTextListener(object :SearchView.OnQueryTextListener, androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filter(newText)
+                return true
+            }
+        })
     }
 
     override fun onResume() {
         super.onResume()
+        contactHeartAdapter.notifyDataSetChanged()
+    }
+
+    private fun filter(serchText:String?) {
+        val filteredList = ArrayList<Contact>()
+        for(item in list) {
+            if (item.heart == true && item.name.contains(serchText?: "")) {
+                filteredList.add(item)
+            }
+        }
+        Log.d("test2", "filter: ${filteredList}")
+        contactHeartAdapter.contactList = filteredList
         contactHeartAdapter.notifyDataSetChanged()
     }
 }

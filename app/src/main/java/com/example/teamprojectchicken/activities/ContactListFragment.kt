@@ -127,7 +127,7 @@ class ContactListFragment : Fragment() {
             }
         }
         Log.d("test", "filter: ${filteredList}")
-        contactListAdapter.contactList = filteredList.toMutableList()
+        contactListAdapter.contactList = filteredList
         contactListAdapter.notifyDataSetChanged()
     }
 
