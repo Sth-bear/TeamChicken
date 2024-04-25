@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.activities.ContactListFragment.Companion.list
 import com.example.teamprojectchicken.adapters.ContactHeartAdapter
@@ -145,4 +146,11 @@ class HeartFragment : Fragment() {
             contactHeartAdapter.notifyDataSetChanged()
         }
     })
+
+    fun recyclerViewAnimation() {
+        val animator = binding.rvHeartList.itemAnimator
+        if (animator is SimpleItemAnimator) {
+            animator.supportsChangeAnimations = false
+        }
+    }
 }
