@@ -16,8 +16,10 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -33,7 +35,7 @@ import com.example.teamprojectchicken.databinding.AddcontactDialogBinding
 import com.example.teamprojectchicken.databinding.AddnotificationDialogBinding
 import com.example.teamprojectchicken.databinding.FragmentContactListBinding
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
-class ContactListFragment : Fragment() {
+class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
     private val binding by lazy { FragmentContactListBinding.inflate(layoutInflater) }
     private val viewModel = ContactViewModel()
     val contactListAdapter by lazy {
@@ -58,8 +60,9 @@ class ContactListFragment : Fragment() {
             }
         }
 
-        addContact()
-        addNotification()
+        binding.btnAdd.setOnClickListener {
+            showPopup(binding.btnAdd)
+        }
     }
 
     override fun onCreateView(
@@ -123,47 +126,45 @@ class ContactListFragment : Fragment() {
     }
     // 연락처 추가 다이얼로그
     private fun addContact() {
-        binding.btnAddPerson.setOnClickListener {
-            val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-            val alertDialog: AlertDialog = builder.create()
-            val binding: AddcontactDialogBinding = AddcontactDialogBinding.inflate(layoutInflater)
-            alertDialog.setView(binding.root)
-            alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val alertDialog: AlertDialog = builder.create()
+        val binding: AddcontactDialogBinding = AddcontactDialogBinding.inflate(layoutInflater)
+        alertDialog.setView(binding.root)
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-            binding.dlBtnCancel.setOnClickListener {
-                alertDialog.dismiss()
-            }
-            binding.dlBtnRegister.setOnClickListener {
-                val name = binding.dlEtName.text.toString()
-                val number = binding.dlEtNumber.text.toString()
-                val email = binding.dlEtEmail.text.toString()
-                if (name.isNotEmpty() && number.isNotEmpty() && email.isNotEmpty()) {
-                    try {
-                        if (number.toInt() is Int) {
-                            contactListAdapter.contactList.add(
-                                Contact(
-                                    name = name,
-                                    number = number.toInt(),
-                                    email = email,
-                                    date = 20000000,
-                                    userImage = R.drawable.ic_mine,
-                                    heart = false,
-                                    uri = null
-                                )
-                            )
-                            contactListAdapter.notifyDataSetChanged()
-                            Toast.makeText(requireContext(), "연락처를 추가했습니다.", Toast.LENGTH_SHORT).show()
-                            alertDialog.dismiss()
-                        }
-                    } catch (e:java.lang.NumberFormatException) {
-                        Toast.makeText(requireContext(), "11자리 이하의 전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
-                    }
-                } else if (name.isEmpty() || number.isEmpty() || email.isEmpty()) {
-                    Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            alertDialog.show()
+        binding.dlBtnCancel.setOnClickListener {
+            alertDialog.dismiss()
         }
+        binding.dlBtnRegister.setOnClickListener {
+            val name = binding.dlEtName.text.toString()
+            val number = binding.dlEtNumber.text.toString()
+            val email = binding.dlEtEmail.text.toString()
+            if (name.isNotEmpty() && number.isNotEmpty() && email.isNotEmpty()) {
+                try {
+                    if (number.toInt() is Int) {
+                        contactListAdapter.contactList.add(
+                            Contact(
+                                name = name,
+                                number = number.toInt(),
+                                email = email,
+                                date = 20000000,
+                                userImage = R.drawable.ic_mine,
+                                heart = false,
+                                uri = null
+                            )
+                        )
+                        contactListAdapter.notifyDataSetChanged()
+                        Toast.makeText(requireContext(), "연락처를 추가했습니다.", Toast.LENGTH_SHORT).show()
+                        alertDialog.dismiss()
+                    }
+                } catch (e:java.lang.NumberFormatException) {
+                    Toast.makeText(requireContext(), "11자리 이하의 전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
+            } else if (name.isEmpty() || number.isEmpty() || email.isEmpty()) {
+                Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        alertDialog.show()
     }
 
 
@@ -191,53 +192,51 @@ class ContactListFragment : Fragment() {
 
     // 알림 추가 다이얼로그
     private fun addNotification() {
-        binding.btnAddNotification.setOnClickListener {
-            val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-            val alertDialog: AlertDialog = builder.create()
-            val binding: AddnotificationDialogBinding = AddnotificationDialogBinding.inflate(layoutInflater)
-            alertDialog.setView(binding.root)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val alertDialog: AlertDialog = builder.create()
+        val binding: AddnotificationDialogBinding = AddnotificationDialogBinding.inflate(layoutInflater)
+        alertDialog.setView(binding.root)
 
-            binding.btnNotificationDlCancel.setOnClickListener {
-                alertDialog.dismiss()
-            }
-            binding.btnNotificationDlSave.setOnClickListener {
-                val name = binding.etNotificationDlName.text.toString()
-                val number = binding.etNotificationDlNumber.text.toString()
-                var time = 0
-
-                // 라디오 버튼
-                val radioGroup = binding.radioGroupNotificationDl
-                val radioOff = binding.radioBtnNotificationDlOff
-                val radio5 = binding.radioBtnNotificationDl5
-                val radio15 = binding.radioBtnNotificationDl15
-                val radio30 = binding.radioBtnNotificationDl30
-
-                if (radioOff.isChecked) {
-                    time = 0
-                } else if (radio5.isChecked) {
-                    time = 5
-                } else if (radio15.isChecked) {
-                    time = 15
-                } else if (radio30.isChecked) {
-                    time = 30
-                }
-
-                if (name.isNotEmpty() && number.isNotEmpty()) {
-                    try {
-                        if (number.toInt() is Int) {
-                            notification(name, number.toInt(), time)
-                            Toast.makeText(requireContext(), "알림을 추가했습니다.", Toast.LENGTH_SHORT).show()
-                            alertDialog.dismiss()
-                        }
-                    } catch (e:java.lang.NumberFormatException) {
-                        Toast.makeText(requireContext(), "11자리 이하의 숫자를 입력해주세요.", Toast.LENGTH_SHORT).show()
-                    }
-                } else if (name.isEmpty() || number.isEmpty()) {
-                    Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            alertDialog.show()
+        binding.btnNotificationDlCancel.setOnClickListener {
+            alertDialog.dismiss()
         }
+        binding.btnNotificationDlSave.setOnClickListener {
+            val name = binding.etNotificationDlName.text.toString()
+            val number = binding.etNotificationDlNumber.text.toString()
+            var time = 0
+
+            // 라디오 버튼
+            val radioGroup = binding.radioGroupNotificationDl
+            val radioOff = binding.radioBtnNotificationDlOff
+            val radio5 = binding.radioBtnNotificationDl5
+            val radio15 = binding.radioBtnNotificationDl15
+            val radio30 = binding.radioBtnNotificationDl30
+
+            if (radioOff.isChecked) {
+                time = 0
+            } else if (radio5.isChecked) {
+                time = 5
+            } else if (radio15.isChecked) {
+                time = 15
+            } else if (radio30.isChecked) {
+                time = 30
+            }
+
+            if (name.isNotEmpty() && number.isNotEmpty()) {
+                try {
+                    if (number.toInt() is Int) {
+                        notification(name, number.toInt(), time)
+                        Toast.makeText(requireContext(), "알림을 추가했습니다.", Toast.LENGTH_SHORT).show()
+                        alertDialog.dismiss()
+                    }
+                } catch (e:java.lang.NumberFormatException) {
+                    Toast.makeText(requireContext(), "11자리 이하의 숫자를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
+            } else if (name.isEmpty() || number.isEmpty()) {
+                Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        alertDialog.show()
     }
 
     // 알림 창
@@ -297,4 +296,19 @@ class ContactListFragment : Fragment() {
         manager.notify(11, builder.build())
     }
 
+    private fun showPopup(v: View) {
+        val popup = PopupMenu(this.context, v)
+        popup.menuInflater.inflate(R.menu.popup_plus, popup.menu)
+        popup.setOnMenuItemClickListener(this)
+        popup.show()
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.popup_addPerson -> addContact()
+            R.id.popup_addNotification -> addNotification()
+        }
+
+        return item != null
+    }
 }
