@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         binding.vpMain.isUserInputEnabled = false
 
         adapter.addFragment(rootFragment)
-        adapter.addFragment(HeartFragment())
+        adapter.addFragment(RootHeart())
         adapter.addFragment(MyPageFragment())
 
         tabLayout.getTabAt(0)

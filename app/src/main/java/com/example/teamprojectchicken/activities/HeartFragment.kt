@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.activities.ContactListFragment.Companion.list
 import com.example.teamprojectchicken.adapters.ContactHeartAdapter
+import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.FragmentHeartBinding
@@ -74,6 +76,22 @@ class HeartFragment : Fragment() {
                         itemTouch.attachToRecyclerView(this)
                     }
                 }
+            }
+            contactHeartAdapter.itemClick = object : ContactHeartAdapter.ItemClick {
+                override fun onClick(view: View, position: Int, contact: Contact) {
+                    val fragment = ContactDetailFragment.newInstance(contact)
+                    parentFragmentManager.beginTransaction()
+                        .setCustomAnimations(
+                            R.anim.fade_in,
+                            R.anim.fade_out,
+                            R.anim.fade_in,
+                            R.anim.fade_out
+                        )
+                        .replace(R.id.root2_frag, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+
             }
         }
         binding.svHeartSearch.isSubmitButtonEnabled = true
