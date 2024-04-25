@@ -41,7 +41,8 @@ class ContactDetailFragment : Fragment() {
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
-                val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                val gallery =
+                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 pickImageLauncher.launch(gallery)
             }
         }
@@ -79,46 +80,54 @@ class ContactDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentContactDetailBinding.inflate(inflater, container, false)
         editUserInfo()
+        heart()
         return binding.root
     }
 
     //ContactListFragment에서 받아온 값 출력
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        displayInfo()
         imageView = binding.ivDetailProfile
         binding.ivDetailProfile.setOnClickListener {
             permissionLauncher()
         }
 
-        var heart = contact?.heart
-
-        // 라이브데이터에 contact.heart 저장
-        if (heart != null) {
-            viewModel.setData(heart)
+    }
+    private fun setProfileImage(contact: Contact) {
+        if (contact.uri == null) {
+            binding.ivDetailProfile.setImageResource(contact.userImage)
+        } else {
+            binding.ivDetailProfile.setImageURI(contact.uri)
         }
+    }
+    private fun displayInfo(){
         contact?.let { contact ->
             binding.apply {
                 etDetailName.setText(contact.name)
                 etDetailPhoneNumber.setText(FormatUtils.formatNumber(contact.number))
                 etDetailBirth.setText(FormatUtils.formatDate(contact.date))
                 etDetailEmail.setText(contact.email)
-                if (contact.uri == null) {
-                    ivDetailProfile.setImageResource(contact.userImage)
-                } else {
-                    ivDetailProfile.setImageURI(contact.uri)
-                }
+                setProfileImage(contact)
                 tvDetailAge.text = FormatUtils.returnAge(contact.date)
                 tvDetailName.text = contact.name
+            }
+        }
+    }
 
-                // 클릭시 뷰모델의 라이브데이터에 Not을 입력
+    private fun heart() {
+        var heart = contact?.heart
+        // 라이브데이터에 contact.heart 저장
+        if (heart != null) {
+            viewModel.setData(heart)
+        }
+        contact?.let {
+            binding.apply {
                 btnDetailHeart.setOnClickListener {
                     heart = heart?.not()
                     heart?.let { it1 -> viewModel.setData(it1) }
-                    contact.heart = heart == true
+                    contact!!.heart = heart == true
                 }
-
-                // 라이브 데이터를 가져와서 이미지 세팅
                 val observer = Observer<Boolean> {
                     if (it) {
                         btnDetailHeart.setImageResource(R.drawable.ic_heart_filled)
@@ -127,7 +136,7 @@ class ContactDetailFragment : Fragment() {
                     }
                 }
                 viewModel.liveData.observe(viewLifecycleOwner, observer)
-                tvDetailAge.text = FormatUtils.returnAge(contact.date)
+                tvDetailAge.text = FormatUtils.returnAge(contact!!.date)
             }
         }
     }
@@ -137,7 +146,7 @@ class ContactDetailFragment : Fragment() {
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 parentFragmentManager.popBackStack()
-                parentFragment?.onStart()
+                //parentFragment?.onStart()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
@@ -152,7 +161,7 @@ class ContactDetailFragment : Fragment() {
         super.onPause()
         parentFragmentManager.popBackStack()
     }
-    
+
     companion object {
         @JvmStatic
         fun newInstance(contact: Contact) =
@@ -180,13 +189,13 @@ class ContactDetailFragment : Fragment() {
                         val name = binding.etDetailName.text.toString()
                         val date = FormatUtils.checkDate(binding.etDetailBirth.text.toString())
                         val email = binding.etDetailEmail.text.toString()
-                        val phoneNumber = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
-                        val fragView = this@ContactDetailFragment.requireView()
+                        val phoneNumber =
+                            FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
                         if (name.isBlank()) {
-                            FormatUtils.showToast(context,"이름을 입력해주세요.")
+                            FormatUtils.showToast(context, "이름을 입력해주세요.")
                             return@setPositiveButton
                         }
-                        if (FormatUtils.checkFormat(context,date,phoneNumber)) {
+                        if (FormatUtils.checkFormat(context, date, phoneNumber)) {
                             return@setPositiveButton
                         }
 
@@ -215,7 +224,7 @@ class ContactDetailFragment : Fragment() {
                 }
             }
         }
-        Log.d("log_변경전","$contact")
+        Log.d("log_변경전", "$contact")
     }
 
 

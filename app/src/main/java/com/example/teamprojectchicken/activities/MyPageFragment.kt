@@ -24,7 +24,6 @@ class MyPageFragment : Fragment() {
     private var param2: String? = null
     private val binding by lazy { FragmentMyPageBinding.inflate(layoutInflater) }
     private var editMode = false
-    private var profileImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,23 +46,11 @@ class MyPageFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        binding.ivMyProfile.setOnClickListener {
-            if (editMode){
-                launchPhotoPicker()
-            }else{
-                showProfilePhotoInFullScreen()
-            }
-
-        }
         binding.btnMySave.setOnClickListener {
+            binding.ivMyProfile.setOnClickListener {
+                launchPhotoPicker()
+            }
             handleSaveButton()
-        }
-    }
-
-    private fun showProfilePhotoInFullScreen() {
-        binding.ivMyProfileBig.visibility = android.view.View.VISIBLE
-        binding.ivMyProfileBig.setOnClickListener {
-            binding.ivMyProfileBig.visibility = android.view.View.INVISIBLE
         }
     }
 
@@ -78,6 +65,7 @@ class MyPageFragment : Fragment() {
         } else {
             toggleEditMode()
         }
+        editMode = true
     }
 
     private fun isEditable(): Boolean {
@@ -91,6 +79,7 @@ class MyPageFragment : Fragment() {
             setPositiveButton("예") { dialog, which ->
                if(handleUserInfoChanges()){
                 toggleEditMode()}
+                binding.ivMyProfile.isClickable = false
             }
             setNegativeButton("아니오", null)
             show()
@@ -98,7 +87,6 @@ class MyPageFragment : Fragment() {
     }
 
     private fun toggleEditMode() {
-        editMode = !editMode
         val newButtonText = if (isEditable()) "EDIT" else "DONE"
         binding.btnMySave.text = newButtonText
         enableEditTextFieldsInMyPage(isEditable())
