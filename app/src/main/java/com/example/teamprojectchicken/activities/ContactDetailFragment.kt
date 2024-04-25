@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,12 +15,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import com.example.teamprojectchicken.R
-import com.example.teamprojectchicken.adapters.ViewPagerAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.utils.FormatUtils
@@ -56,13 +53,7 @@ class ContactDetailFragment : Fragment() {
             }
         }
 
-    private fun permissionLauncher() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
-        } else {
-            requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-    }
+
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,52 +84,6 @@ class ContactDetailFragment : Fragment() {
             permissionLauncher()
         }
 
-    }
-    private fun setProfileImage(contact: Contact) {
-        if (contact.uri == null) {
-            binding.ivDetailProfile.setImageResource(contact.userImage)
-        } else {
-            binding.ivDetailProfile.setImageURI(contact.uri)
-        }
-    }
-    private fun displayInfo(){
-        contact?.let { contact ->
-            binding.apply {
-                etDetailName.setText(contact.name)
-                etDetailPhoneNumber.setText(FormatUtils.formatNumber(contact.number))
-                etDetailBirth.setText(FormatUtils.formatDate(contact.date))
-                etDetailEmail.setText(contact.email)
-                setProfileImage(contact)
-                tvDetailAge.text = FormatUtils.returnAge(contact.date)
-                tvDetailName.text = contact.name
-            }
-        }
-    }
-
-    private fun heart() {
-        var heart = contact?.heart
-        // 라이브데이터에 contact.heart 저장
-        if (heart != null) {
-            viewModel.setData(heart)
-        }
-        contact?.let {
-            binding.apply {
-                btnDetailHeart.setOnClickListener {
-                    heart = heart?.not()
-                    heart?.let { it1 -> viewModel.setData(it1) }
-                    contact!!.heart = heart == true
-                }
-                val observer = Observer<Boolean> {
-                    if (it) {
-                        btnDetailHeart.setImageResource(R.drawable.ic_heart_filled)
-                    } else {
-                        btnDetailHeart.setImageResource(R.drawable.ic_heart)
-                    }
-                }
-                viewModel.liveData.observe(viewLifecycleOwner, observer)
-                tvDetailAge.text = FormatUtils.returnAge(contact!!.date)
-            }
-        }
     }
 
     override fun onAttach(context: Context) {
@@ -172,63 +117,146 @@ class ContactDetailFragment : Fragment() {
             }
     }
 
+    private fun setProfileImage(contact: Contact) {
+        if (contact.uri == null) {
+            binding.ivDetailProfile.setImageResource(contact.userImage)
+        } else {
+            binding.ivDetailProfile.setImageURI(contact.uri)
+        }
+    }
 
-    //디테일 페이지 정보 수정
+    //초기 유저 정보 디스플레이
+    private fun displayInfo(){
+        contact?.let { contact ->
+            binding.apply {
+                etDetailName.setText(contact.name)
+                etDetailPhoneNumber.setText(FormatUtils.formatNumber(contact.number))
+                etDetailBirth.setText(FormatUtils.formatDate(contact.date))
+                etDetailEmail.setText(contact.email)
+                setProfileImage(contact)
+                tvDetailAge.text = FormatUtils.returnAge(contact.date)
+                tvDetailName.text = contact.name
+            }
+        }
+    }
+
+    //하트 기능
+    private fun heart() {
+        var heart = contact?.heart
+        // 라이브데이터에 contact.heart 저장
+        if (heart != null) {
+            viewModel.setData(heart)
+        }
+        contact?.let {
+            binding.apply {
+                btnDetailHeart.setOnClickListener {
+                    heart = heart?.not()
+                    heart?.let { it1 -> viewModel.setData(it1) }
+                    contact!!.heart = heart == true
+                }
+                val observer = Observer<Boolean> {
+                    if (it) {
+                        btnDetailHeart.setImageResource(R.drawable.ic_heart_filled)
+                    } else {
+                        btnDetailHeart.setImageResource(R.drawable.ic_heart)
+                    }
+                }
+                viewModel.liveData.observe(viewLifecycleOwner, observer)
+                tvDetailAge.text = FormatUtils.returnAge(contact!!.date)
+            }
+        }
+    }
+    //권한 요청
+    private fun permissionLauncher() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+        } else {
+            requestPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+    }
+
+    //유저 정보 수정
     fun editUserInfo() {
         var isEditable = false
         binding.btnDetailSave.setOnClickListener {
-            if (!isEditable) {
-                isEditable = true
-                binding.btnDetailSave.text = "DONE"
-                enableEditTextFields(true)
-            } else {
-                AlertDialog.Builder(context).apply {
-                    setTitle("연락처 수정")
-                    setMessage("정보수정을 완료하시겠습니까?")
-                    setPositiveButton("예") { dialog, which ->
-                        val name = binding.etDetailName.text.toString()
-                        val date = FormatUtils.checkDate(binding.etDetailBirth.text.toString())
-                        val email = binding.etDetailEmail.text.toString()
-                        val phoneNumber =
-                            FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
-                        if (name.isBlank()) {
-                            FormatUtils.showToast(context, "이름을 입력해주세요.")
-                            return@setPositiveButton
-                        }
-                        if (FormatUtils.checkFormat(context, date, phoneNumber)) {
-                            return@setPositiveButton
-                        }
-
-                        contact?.name = name
-                        contact?.date = date
-                        contact?.email = email
-                        contact?.number = phoneNumber
-
-                        binding.apply {
-                            tvDetailAge.text = FormatUtils.returnAge(date)
-                            tvDetailName.text = name
-                            etDetailBirth.setText(FormatUtils.formatDate(date))
-                            etDetailEmail.setText(email)
-                            etDetailName.setText(name)
-                            etDetailPhoneNumber.setText(FormatUtils.formatNumber(phoneNumber))
-                        }
-
-                        isEditable = false
-                        enableEditTextFields(false)
-                        binding.btnDetailSave.text = "EDIT"
-
-                    }
-                    setNegativeButton("아니요", null)
-                    show()
-
-                }
-            }
+            isEditable = !isEditable
+            updateEditMode(isEditable)
         }
-        Log.d("log_변경전", "$contact")
     }
 
 
-    //editText enable 관리 함수
+    //수정모드 들어가는 부분 ~~confirmEdit까지
+    private fun updateEditMode(isEditable: Boolean) {
+        if (isEditable) {
+            enterEditMode()
+        } else {
+            confirmEdit()
+        }
+    }
+
+    private fun enterEditMode() {
+        binding.btnDetailSave.text = "DONE"
+        enableEditTextFields(true)
+    }
+
+    private fun confirmEdit() {
+        AlertDialog.Builder(context).apply {
+            setTitle("연락처 수정")
+            setMessage("정보수정을 완료하시겠습니까?")
+            setPositiveButton("예") { _, _ -> saveUserInfo() }
+            setNegativeButton("아니요", null)
+            show()
+        }
+    }
+
+    //
+    private fun saveUserInfo() {
+        val name = binding.etDetailName.text.toString()
+        val date = FormatUtils.checkDate(binding.etDetailBirth.text.toString())
+        val email = binding.etDetailEmail.text.toString()
+        val phoneNumber = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
+
+        if (!validateUserInfo(name, date, phoneNumber)) return
+
+        updateContactInfo(name, date, email, phoneNumber)
+        updateUI(name, date, phoneNumber, email)
+
+        binding.btnDetailSave.text = "EDIT"
+        enableEditTextFields(false)
+    }
+
+    private fun validateUserInfo(name: String, date: Int, phoneNumber: Int): Boolean {
+        if (name.isBlank()) {
+            context?.let { FormatUtils.showToast(it, "이름을 입력해주세요.") }
+            return false
+        }
+        if (context?.let { FormatUtils.checkFormat(it, date, phoneNumber) } == true) {
+            return false
+        }
+        return true
+    }
+
+    private fun updateContactInfo(name: String, date: Int, email: String, phoneNumber: Int) {
+        contact?.apply {
+            this.name = name
+            this.date = date
+            this.email = email
+            this.number = phoneNumber
+        }
+    }
+
+    private fun updateUI(name: String, date: Int, phoneNumber: Int, email: String) {
+        binding.apply {
+            tvDetailAge.text = FormatUtils.returnAge(date)
+            tvDetailName.text = name
+            etDetailBirth.setText(FormatUtils.formatDate(date))
+            etDetailEmail.setText(email)
+            etDetailName.setText(name)
+            etDetailPhoneNumber.setText(FormatUtils.formatNumber(phoneNumber))
+        }
+    }
+
+
     private fun enableEditTextFields(isEnabled: Boolean) {
         with(binding) {
             etDetailName.isEnabled = isEnabled
@@ -238,5 +266,9 @@ class ContactDetailFragment : Fragment() {
             ivDetailProfile.isEnabled = isEnabled
         }
     }
+
+
 }
+
+    //editText enable 관리 함수
 
