@@ -105,8 +105,8 @@ class ContactListFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onPause() {
+        super.onPause()
         contactListAdapter.notifyItemRangeChanged(0, list.size)
     }
     // 연락처 추가 다이얼로그

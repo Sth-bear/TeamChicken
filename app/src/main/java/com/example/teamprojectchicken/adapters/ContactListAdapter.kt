@@ -1,15 +1,11 @@
 package com.example.teamprojectchicken.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
-import com.example.teamprojectchicken.activities.ContactListFragment
-import com.example.teamprojectchicken.activities.MainActivity
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.ItemRvContactList2Binding
 import com.example.teamprojectchicken.databinding.ItemRvContactListBinding

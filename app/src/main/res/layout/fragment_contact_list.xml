@@ -8,9 +8,8 @@
     tools:context=".activities.ContactListFragment">
 
 
-    <androidx.appcompat.widget.SearchView
+    <SearchView
         android:id="@+id/sv_list_search"
-        queryBackground="@null"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="24dp"
@@ -24,7 +23,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:queryBackground="@null"
-        app:queryHint="Search..."></androidx.appcompat.widget.SearchView>
+        app:queryHint="Search...">
+
+    </SearchView>
 
     <ImageView
         android:id="@+id/iv_set"
