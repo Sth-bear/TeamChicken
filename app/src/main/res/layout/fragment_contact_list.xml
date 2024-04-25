@@ -61,7 +61,7 @@
         android:tint="#D5D5D5"
         app:borderWidth="0dp"
         app:fabCustomSize="50dp"
-        app:fabSize="normal"
+        app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:useCompatPadding="true" />
