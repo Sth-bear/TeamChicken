@@ -60,11 +60,11 @@ class MyPageFragment : Fragment() {
     private fun toggleEditMode() {
         val newButtonText = if (isEditable()) "EDIT" else "DONE"
         binding.btnMySave.text = newButtonText
-        enableEditTextFieldsInMyPage(!isEditable())
-        if (isEditable()){
-            changeColorAfterEnabledOpen()
-        } else {
+        enableEditTextFieldsInMyPage(isEditable())
+        if (!isEditable()){
             changeColorAfterEnabledClose()
+        } else {
+            changeColorAfterEnabledOpen()
         }
     }
 
@@ -100,7 +100,7 @@ class MyPageFragment : Fragment() {
             tvMyName.text = newName
             tvMyAge.text = FormatUtils.returnAge(newBirth)
             etMyEmail.setText(newEmail)
-            etMyName.setText(newEmail)
+            etMyName.setText(newName)
             etMyBirth.setText(FormatUtils.formatDate(newBirth))
             etMyPhoneNumber.setText(FormatUtils.formatNumber(newPhoneNumber))
         }
