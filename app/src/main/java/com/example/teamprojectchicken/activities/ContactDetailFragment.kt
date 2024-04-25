@@ -1,6 +1,6 @@
 package com.example.teamprojectchicken.activities
 
-import android.app.Activity.RESULT_OK
+import  android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -100,11 +100,6 @@ class ContactDetailFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         callback.remove()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        parentFragmentManager.popBackStack()
     }
 
     companion object {
