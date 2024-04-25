@@ -18,6 +18,7 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var contactList = mutableListOf<Contact>()
     var viewType:Int = ContactViewModel().getType()
 
+
     interface ItemClick {
         fun onClick(view:View, position: Int, contact: Contact)
         fun longClick(position: Int)

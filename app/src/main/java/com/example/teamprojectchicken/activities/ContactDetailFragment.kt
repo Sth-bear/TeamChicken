@@ -17,12 +17,14 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.utils.FormatUtils
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
+import com.example.teamprojectchicken.utils.visible
 
 private const val ARG_CONTACT = "contact"
 
@@ -33,6 +35,9 @@ class ContactDetailFragment : Fragment() {
     private var _binding: FragmentContactDetailBinding? = null
     private var imageUri: Uri? = null
     private lateinit var imageView: ImageView
+    private var editMode = false
+
+
     private val binding get() = _binding!!
 
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
@@ -61,28 +66,38 @@ class ContactDetailFragment : Fragment() {
         arguments?.let {
             contact = it.getParcelable(ARG_CONTACT, Contact::class.java)
         }
+
     }
 
     // 뷰 바인딩
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
+
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentContactDetailBinding.inflate(inflater, container, false)
         editUserInfo()
+       (activity as? FragmentActivity)?.visible()
         heart()
+
+//        val a = view?.findViewById<TabLayout>(R.id.tl_main_tapLayout)
+//        a?.visibility = View.GONE
+//
         return binding.root
     }
+
 
     //ContactListFragment에서 받아온 값 출력
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         displayInfo()
         imageView = binding.ivDetailProfile
         binding.ivDetailProfile.setOnClickListener {
             permissionLauncher()
         }
+
 
     }
 
@@ -101,6 +116,7 @@ class ContactDetailFragment : Fragment() {
         super.onDetach()
         callback.remove()
     }
+
 
     companion object {
         @JvmStatic
@@ -187,6 +203,7 @@ class ContactDetailFragment : Fragment() {
         } else {
             confirmEdit()
         }
+        editMode = false
     }
 
     private fun enterEditMode() {

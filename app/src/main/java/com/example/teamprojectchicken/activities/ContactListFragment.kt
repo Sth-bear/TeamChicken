@@ -8,6 +8,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
+import com.example.teamprojectchicken.utils.visible
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -17,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -30,6 +32,7 @@ import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.AddcontactDialogBinding
 import com.example.teamprojectchicken.databinding.FragmentContactListBinding
 import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_LINEAR
+import com.example.teamprojectchicken.utils.isvisible
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
 class ContactListFragment : Fragment() {
     private val binding by lazy { FragmentContactListBinding.inflate(layoutInflater) }
@@ -56,6 +59,11 @@ class ContactListFragment : Fragment() {
         ivSetOnClick()
         itemOnClick()
         searchContact()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as? FragmentActivity)?.isvisible()
     }
 
     private fun bind() {
@@ -104,6 +112,7 @@ class ContactListFragment : Fragment() {
         contactListAdapter.itemClick = object : ContactListAdapter.ItemClick {
             override fun onClick(view: View, position: Int, contact: Contact) {
                 goToDetailContact(contact)
+
             }
             override fun longClick(position: Int) {
                 delContact(position)
