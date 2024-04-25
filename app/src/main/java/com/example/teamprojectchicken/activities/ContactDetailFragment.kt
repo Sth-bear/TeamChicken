@@ -183,10 +183,10 @@ class ContactDetailFragment : Fragment() {
                         val phoneNumber = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
                         val fragView = this@ContactDetailFragment.requireView()
                         if (name.isBlank()) {
-                            FormatUtils.showSnackBar(fragView,"이름을 입력해주세요.")
+                            FormatUtils.showToast(context,"이름을 입력해주세요.")
                             return@setPositiveButton
                         }
-                        if (FormatUtils.checkFormat(fragView,date,phoneNumber)) {
+                        if (FormatUtils.checkFormat(context,date,phoneNumber)) {
                             return@setPositiveButton
                         }
 
