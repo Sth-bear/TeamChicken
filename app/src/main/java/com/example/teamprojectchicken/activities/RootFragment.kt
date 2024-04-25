@@ -15,22 +15,6 @@ class RootFragment : Fragment() {
         arguments?.let {
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        childFragmentManager.beginTransaction().apply {
-            replace(R.id.root_frag, ContactListFragment())
-            commit()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        childFragmentManager.beginTransaction().apply {
-            replace(R.id.root_frag, ContactListFragment())
-            commit()
-        }
-    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,5 +22,13 @@ class RootFragment : Fragment() {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_root, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        childFragmentManager.beginTransaction().apply {
+            replace(R.id.root_frag, ContactListFragment())
+            commit()
+        }
     }
 }

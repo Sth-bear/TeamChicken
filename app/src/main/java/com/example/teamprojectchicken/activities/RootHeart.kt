@@ -14,6 +14,7 @@ class RootHeart : Fragment() {
 
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -22,16 +23,16 @@ class RootHeart : Fragment() {
         return inflater.inflate(R.layout.fragment_root_heart, container, false)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         childFragmentManager.beginTransaction().apply {
             replace(R.id.root2_frag, HeartFragment())
             commit()
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStart() {
+        super.onStart()
         childFragmentManager.beginTransaction().apply {
             replace(R.id.root2_frag, HeartFragment())
             commit()
