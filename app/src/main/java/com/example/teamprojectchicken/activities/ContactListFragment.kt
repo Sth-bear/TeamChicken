@@ -1,6 +1,7 @@
 package com.example.teamprojectchicken.activities
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -61,6 +62,7 @@ class ContactListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        longClick()
         with(binding.rvListList) {
             adapter = contactListAdapter
             layoutManager = if (viewModel.getType() == 1) {
@@ -196,5 +198,26 @@ class ContactListFragment : Fragment() {
             contactListAdapter.notifyDataSetChanged()
         }
     })
+
+    fun longClick () {
+        contactListAdapter.longClick = object : ContactListAdapter.LongClick {
+            override fun longClick(position: Int) {
+                var builder = AlertDialog.Builder(requireContext())
+                builder.setTitle("연락처 삭제")
+                builder.setMessage("해당 연락처를 삭제합니다.")
+
+                val listener = DialogInterface.OnClickListener { p0, p1 ->
+                    // 다이얼로그 인터페이스 생성, 버튼 클릭시 처리 이벤트
+                    if (p1 == DialogInterface.BUTTON_POSITIVE ) {
+                        contactListAdapter.removeItem(position)
+                        Toast.makeText(requireContext(), "연락처 삭제 완료", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                builder.setPositiveButton("확인", listener)
+                builder.setNegativeButton("취소", null)
+                builder.show()
+            }
+        }
+    }
 
 }
