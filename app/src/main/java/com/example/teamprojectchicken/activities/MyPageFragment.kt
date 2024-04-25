@@ -33,15 +33,18 @@ class MyPageFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
 
         }
+        setupActivityResultLauncher()
+        editMyInfo()
+        editProfileImage()
+    }
+
+    private fun setupActivityResultLauncher() {
         photoPickerLauncher =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
                 uri?.let {
                     binding.ivMyProfile.setImageURI(uri)
                 }
             }
-
-        editMyInfo()
-        editProfileImage()
     }
 
     private fun editProfileImage() {
@@ -55,8 +58,6 @@ class MyPageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        // Inflate the layout for this fragment
         return binding.root
     }
 
@@ -91,7 +92,7 @@ class MyPageFragment : Fragment() {
                             tvMyName.text = newName
                             tvMyAge.text = FormatUtils.returnAge(newBirth)
                             etMyEmail.setText(newEmail)
-                            etMyName.setText(newEmail)
+                            etMyName.setText(newName)
                             etMyBirth.setText(FormatUtils.formatDate(newBirth))
                             etMyPhoneNumber.setText(FormatUtils.formatNumber(newPhoneNumber))
                         }
@@ -110,6 +111,34 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    // edit눌렀을 때 editext 상태 변경
+    private fun enableEditTextFieldsInMyPage(isEnabled: Boolean){
+        with(binding){
+            etMyName.isEnabled = isEnabled
+            etMyBirth.isEnabled = isEnabled
+            etMyEmail.isEnabled = isEnabled
+            etMyPhoneNumber.isEnabled = isEnabled
+        }
+    }
+    // 수정 불가능 모드일 때 텍스트 컬러
+    private fun changeColorAfterEnabledClose(){
+        val closeColor = Color.parseColor("#E3E3E3")
+        setEditTextColor(closeColor)
+    }
+
+    // 수정 가능 모드일 때 텍스트 컬러
+    private fun changeColorAfterEnabledOpen(){
+        val openColor = resources.getColor(R.color.myProfileUpdate)
+        setEditTextColor(openColor)
+    }
+
+    private fun setEditTextColor(color: Int) {
+        binding.etMyName.setTextColor(color)
+        binding.etMyBirth.setTextColor(color)
+        binding.etMyEmail.setTextColor(color)
+        binding.etMyPhoneNumber.setTextColor(color)
+    }
+
     companion object {
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
@@ -119,31 +148,6 @@ class MyPageFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
-    }
-
-    // edit눌렀을 때 editext 상태 변경
-    private fun enableEditTextFieldsInMyPage(isEnabled: Boolean){
-        with(binding){
-            binding.etMyName.isEnabled = isEnabled
-            binding.etMyBirth.isEnabled = isEnabled
-            binding.etMyEmail.isEnabled = isEnabled
-            binding.etMyPhoneNumber.isEnabled = isEnabled
-        }
-    }
-    // 수정 불가능 모드일 때 텍스트 컬러
-    private fun changeColorAfterEnabledClose(){
-        binding.etMyName.setTextColor(Color.parseColor("#E3E3E3"))
-        binding.etMyBirth.setTextColor(Color.parseColor("#E3E3E3"))
-        binding.etMyEmail.setTextColor(Color.parseColor("#E3E3E3"))
-        binding.etMyPhoneNumber.setTextColor(Color.parseColor("#E3E3E3"))
-    }
-    // 수정 가능 모드일 때 텍스트 컬러
-    private fun changeColorAfterEnabledOpen(){
-        val openColor = R.color.myProfileUpdate.toInt()
-        binding.etMyName.setTextColor(openColor)
-        binding.etMyBirth.setTextColor(openColor)
-        binding.etMyEmail.setTextColor(openColor)
-        binding.etMyPhoneNumber.setTextColor(openColor)
     }
 
 }

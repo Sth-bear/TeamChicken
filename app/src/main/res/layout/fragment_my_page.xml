@@ -69,7 +69,7 @@
                     android:layout_marginTop="32dp"
                     android:background="#00FFFFFF"
                     android:src="@drawable/mypagerofile"
-                    app:civ_border_color="#7C7C7C"
+                    app:civ_border_color="#9A9A9A"
                     app:civ_border_width="2dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

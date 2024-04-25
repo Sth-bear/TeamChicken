@@ -50,9 +50,10 @@ class MainActivity : AppCompatActivity() {
         val viewPager = binding.vpMain
         val adapter = ViewPagerAdapter(this)
         binding.vpMain.adapter = adapter
+        binding.vpMain.isUserInputEnabled = false
 
         adapter.addFragment(rootFragment)
-        adapter.addFragment(HeartFragment())
+        adapter.addFragment(RootHeart())
         adapter.addFragment(MyPageFragment())
 
         tabLayout.getTabAt(0)

@@ -146,6 +146,10 @@ class ContactDetailFragment : Fragment() {
         callback.remove()
     }
 
+    override fun onPause() {
+        super.onPause()
+        parentFragmentManager.popBackStack()
+    }
 
     companion object {
         @JvmStatic
@@ -210,6 +214,7 @@ class ContactDetailFragment : Fragment() {
         }
         Log.d("log_변경전","$contact")
     }
+
 
     //editText enable 관리 함수
     private fun enableEditTextFields(isEnabled: Boolean) {
