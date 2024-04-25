@@ -35,6 +35,15 @@ class MyPageFragment : Fragment() {
         setupListeners()
     }
 
+    private fun setupActivityResultLauncher() {
+        photoPickerLauncher =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+                uri?.let {
+                    binding.ivMyProfile.setImageURI(uri)
+                }
+            }
+    }
+
     private fun setupListeners() {
         binding.ivMyProfile.setOnClickListener {
             launchPhotoPicker()
@@ -57,15 +66,8 @@ class MyPageFragment : Fragment() {
         }
     }
 
-    private fun toggleEditMode() {
-        val newButtonText = if (isEditable()) "EDIT" else "DONE"
-        binding.btnMySave.text = newButtonText
-        enableEditTextFieldsInMyPage(isEditable())
-        if (!isEditable()){
-            changeColorAfterEnabledClose()
-        } else {
-            changeColorAfterEnabledOpen()
-        }
+    private fun isEditable(): Boolean {
+        return binding.btnMySave.text.toString() == "DONE"
     }
 
     private fun showConfirmationDialog() {
@@ -81,6 +83,17 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    private fun toggleEditMode() {
+        val newButtonText = if (isEditable()) "EDIT" else "DONE"
+        binding.btnMySave.text = newButtonText
+        enableEditTextFieldsInMyPage(isEditable())
+        if (!isEditable()){
+            changeColorAfterEnabledClose()
+        } else {
+            changeColorAfterEnabledOpen()
+        }
+    }
+
     private fun handleUserInfoChanges() : Boolean {
         val newName = binding.etMyName.text.toString()
         val newBirth = FormatUtils.checkDate(binding.etMyBirth.text.toString())
@@ -89,10 +102,10 @@ class MyPageFragment : Fragment() {
 
         val fragView = requireView()
         if (newName.isBlank()) {
-            FormatUtils.showSnackBar(fragView,"이름을 입력해주세요.")
+            FormatUtils.showToast(fragView.context,"이름을 입력해주세요.")
             return false
         }
-        if (FormatUtils.checkFormat(fragView,newBirth,newPhoneNumber)) {
+        if (FormatUtils.checkFormat(fragView.context,newBirth,newPhoneNumber)) {
             return false
         }
 
@@ -105,19 +118,6 @@ class MyPageFragment : Fragment() {
             etMyPhoneNumber.setText(FormatUtils.formatNumber(newPhoneNumber))
         }
         return true
-    }
-
-    private fun isEditable(): Boolean {
-        return binding.btnMySave.text.toString() == "DONE"
-    }
-
-    private fun setupActivityResultLauncher() {
-        photoPickerLauncher =
-            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-                uri?.let {
-                    binding.ivMyProfile.setImageURI(uri)
-                }
-            }
     }
 
     override fun onCreateView(

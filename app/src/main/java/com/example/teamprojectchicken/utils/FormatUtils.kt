@@ -1,6 +1,8 @@
 package com.example.teamprojectchicken.utils
 
+import android.content.Context
 import android.view.View
+import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import java.time.LocalDate
 
@@ -59,21 +61,18 @@ object FormatUtils {
         return "${formatted.substring(0,4)}.${formatted.substring(4,6)}.${formatted.substring(6)}"
     }
 
-    fun checkFormat(view : View, vararg formatted: Int):Boolean {
+    fun checkFormat(context: Context, vararg formatted: Int):Boolean {
         formatted.forEach {
             if (it == -1) {
-                showSnackBar(view,"정확한 값을 입력해주세요")
+                showToast(context,"정확한 값을 입력해주세요")
                 return true
             }
         }
         return false
     }
 
-     fun showSnackBar(view: View, text:String) {
-        val snackbar = Snackbar.make(view,"${text}",Snackbar.LENGTH_SHORT)
-        snackbar.setAction("확인") {
-            snackbar.dismiss()
-        }
-        snackbar.show()
+    //토스트 띄우는 함수
+    fun showToast(context: Context, text:String) {
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 }
