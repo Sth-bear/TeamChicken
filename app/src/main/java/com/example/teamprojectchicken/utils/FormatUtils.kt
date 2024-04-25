@@ -32,13 +32,14 @@ object FormatUtils {
     fun checkPhoneNumber(number:String): Int{
         val input = number.drop(1)
         val formatted = input.replace("-","")
-        if (!formatted.all{it.isDigit()}) {
+        val formatted2 = formatted.replace(".", "")
+        if (!formatted2.all{it.isDigit()}) {
             return -1
         }
-        if (formatted.length != 10) {
+        if (formatted2.length != 10) {
             return -1
         }
-        return formatted.toInt()
+        return formatted2.toInt()
     }
 
     fun checkDate(date:String): Int{
