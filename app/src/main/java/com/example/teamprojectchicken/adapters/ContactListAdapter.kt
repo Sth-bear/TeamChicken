@@ -23,19 +23,11 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     interface ItemClick {
         fun onClick(view:View, position: Int, contact: Contact)
+        fun longClick(position: Int)
     }
     var itemClick: ItemClick? = null
 
-    interface LongClick {
-        fun longClick(position: Int)
-    }
-    var longClick: LongClick? = null
 
-    fun removeItem(position: Int) {
-        contactList.removeAt(position)
-        notifyItemRemoved(position)
-        notifyItemRangeRemoved(position, itemCount - position)
-    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType) {
             VIEW_TYPE_LINEAR -> {
@@ -69,7 +61,7 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
 
         holder.itemView.setOnLongClickListener {
-            longClick?.longClick(position)
+            itemClick?.longClick(position)
             false
         }
 

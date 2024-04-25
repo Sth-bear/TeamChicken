@@ -34,10 +34,11 @@ class ConViewModel(private val dataSource: DataSource): ViewModel() {
         }
     }
 
-    fun pushLike(position: Int) {
+    fun pushLike(name: String) {
         val currentList = contactLiveData.value?: mutableListOf()
-        val currentHeart = currentList[position].heart
-        _contactLiveData.value?.get(position)?.heart = !currentHeart
+        val index = contactLiveData.value?.indexOfFirst { it.name ==  name}?:-1
+        val currentHeart = currentList[index].heart
+        _contactLiveData.value?.get(index)?.heart = !currentHeart
     }
 
 

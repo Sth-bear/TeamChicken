@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
+import com.example.teamprojectchicken.adapters.ContactListAdapter.Companion.VIEW_TYPE_GRID
+import com.example.teamprojectchicken.adapters.ContactListAdapter.Companion.VIEW_TYPE_LINEAR
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.ItemRvContactList2Binding
 import com.example.teamprojectchicken.databinding.ItemRvContactListBinding
@@ -15,10 +17,6 @@ import com.example.teamprojectchicken.viewmodels.ContactViewModel
 class ContactHeartAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var contactList = mutableListOf<Contact>()
     var viewType:Int = ContactViewModel().getType()
-    companion object{
-        const val VIEW_TYPE_LINEAR = 1
-        const val VIEW_TYPE_GRID = 2
-    }
 
     interface ItemClick {
         fun onClick(view: View, position: Int, contact: Contact)
@@ -105,5 +103,9 @@ class ContactHeartAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 tvItemRvName.text = contact.name
             }
         }
+    }
+    fun submitList(items: MutableList<Contact>) {
+        this.contactList = items
+        notifyDataSetChanged()
     }
 }

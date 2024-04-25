@@ -19,12 +19,15 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.utils.FormatUtils
+import com.example.teamprojectchicken.viewmodels.ConViewModel
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
+import com.example.teamprojectchicken.viewmodels.ContactViewModelFactory
 
 private const val ARG_CONTACT = "contact"
 
@@ -36,6 +39,9 @@ class ContactDetailFragment : Fragment() {
     private var imageUri: Uri? = null
     private lateinit var imageView: ImageView
     private val binding get() = _binding!!
+    private val conViewModel by viewModels<ConViewModel> {
+        ContactViewModelFactory()
+    }
 
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -95,6 +101,7 @@ class ContactDetailFragment : Fragment() {
         // 라이브데이터에 contact.heart 저장
         if (heart != null) {
             viewModel.setData(heart)
+            conViewModel.pushLike(contact?.name?:"")
         }
         contact?.let { contact ->
             binding.apply {
@@ -212,7 +219,6 @@ class ContactDetailFragment : Fragment() {
                 }
             }
         }
-        Log.d("log_변경전","$contact")
     }
 
 
