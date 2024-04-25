@@ -61,7 +61,6 @@ object FormatUtils {
         return "${formatted.substring(0,4)}.${formatted.substring(4,6)}.${formatted.substring(6)}"
     }
 
-    // 사용자가 입력한 개인 정보가 옳은지 체크하는 함수
     fun checkFormat(context: Context, vararg formatted: Int):Boolean {
         formatted.forEach {
             if (it == -1) {
