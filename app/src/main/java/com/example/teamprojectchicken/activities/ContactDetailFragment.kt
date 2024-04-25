@@ -149,10 +149,6 @@ class ContactDetailFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         parentFragmentManager.popBackStack()
-        parentFragmentManager.beginTransaction().apply {
-            replace(R.id.root_frag, ContactListFragment())
-            commit()
-        }
     }
 
     companion object {

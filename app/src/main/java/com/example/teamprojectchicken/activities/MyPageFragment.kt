@@ -15,11 +15,13 @@ import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.databinding.FragmentMyPageBinding
 import com.example.teamprojectchicken.utils.FormatUtils
 
+
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 class MyPageFragment : Fragment() {
     private lateinit var photoPickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
+
     private var param1: String? = null
     private var param2: String? = null
     private val binding by lazy { FragmentMyPageBinding.inflate(layoutInflater) }
@@ -32,82 +34,8 @@ class MyPageFragment : Fragment() {
 
         }
         setupActivityResultLauncher()
-        setupListeners()
-    }
-
-    private fun setupListeners() {
-        binding.ivMyProfile.setOnClickListener {
-            launchPhotoPicker()
-        }
-        binding.btnMySave.setOnClickListener {
-            handleSaveButton()
-        }
-    }
-
-    private fun launchPhotoPicker() {
-        val request = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-        photoPickerLauncher.launch(request)
-    }
-
-    private fun handleSaveButton() {
-        if (isEditable()) {
-            showConfirmationDialog()
-        } else {
-            toggleEditMode()
-        }
-    }
-
-    private fun toggleEditMode() {
-        val newButtonText = if (isEditable()) "EDIT" else "DONE"
-        binding.btnMySave.text = newButtonText
-        enableEditTextFieldsInMyPage(isEditable())
-        if (!isEditable()){
-            changeColorAfterEnabledClose()
-        } else {
-            changeColorAfterEnabledOpen()
-        }
-    }
-
-    private fun showConfirmationDialog() {
-        AlertDialog.Builder(context).apply {
-            setTitle("회원정보 수정")
-            setMessage("정보수정을 완료하시겠습니까?")
-            setPositiveButton("예") { dialog, which ->
-                handleUserInfoChanges()
-                toggleEditMode()
-            }
-            setNegativeButton("아니오", null)
-            show()
-        }
-    }
-
-    private fun handleUserInfoChanges() {
-        val newName = binding.etMyName.text.toString()
-        val newBirth = FormatUtils.checkDate(binding.etMyBirth.text.toString())
-        val newEmail = binding.etMyEmail.text.toString()
-        val newPhoneNumber = FormatUtils.checkPhoneNumber(binding.etMyPhoneNumber.text.toString())
-
-        val fragView = requireView()
-        if (newName.isBlank()) {
-            FormatUtils.showSnackBar(fragView,"이름을 입력해주세요.")
-            return
-        }
-        if (FormatUtils.checkFormat(fragView,newBirth,newPhoneNumber)) {
-            return
-        }
-
-        binding.apply {
-            tvMyName.text = newName
-            tvMyAge.text = FormatUtils.returnAge(newBirth)
-            etMyEmail.setText(newEmail)
-            etMyName.setText(newName)
-            etMyBirth.setText(FormatUtils.formatDate(newBirth))
-            etMyPhoneNumber.setText(FormatUtils.formatNumber(newPhoneNumber))
-        }
-    }
-
-    private fun isEditable(): Boolean {
-        return binding.btnMySave.text.toString() == "DONE"
+        editMyInfo()
+        editProfileImage()
     }
 
     private fun setupActivityResultLauncher() {
@@ -119,11 +47,68 @@ class MyPageFragment : Fragment() {
             }
     }
 
+    private fun editProfileImage() {
+        binding.ivMyProfile.setOnClickListener {
+            val request = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            photoPickerLauncher.launch(request)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         return binding.root
+    }
+
+    //정보 수정하는 부분 0424 함수명 변경 editInfo -> editMyInfo
+    fun editMyInfo() {
+        var isEditable = false
+        binding.btnMySave.setOnClickListener {
+            if (!isEditable) {
+                isEditable = true
+                binding.btnMySave.text = "DONE"
+                enableEditTextFieldsInMyPage(true)
+                changeColorAfterEnabledOpen()
+            } else {
+                AlertDialog.Builder(context).apply {
+                    setTitle("회원정보 수정")
+                    setMessage("정보수정을 완료하시겠습니까?")
+                    setPositiveButton("예") { dialog, which ->
+                        val newName = binding.etMyName.text.toString()
+                        val newBirth = FormatUtils.checkDate(binding.etMyBirth.text.toString())
+                        val newEmail = binding.etMyEmail.text.toString()
+                        val newPhoneNumber = FormatUtils.checkPhoneNumber(binding.etMyPhoneNumber.text.toString())
+                        val fragView = this@MyPageFragment.requireView()
+                        if (newName.isBlank()) {
+                            FormatUtils.showSnackBar(fragView,"이름을 입력해주세요.")
+                            return@setPositiveButton
+                        }
+                        if (FormatUtils.checkFormat(fragView,newBirth,newPhoneNumber)) {
+                            return@setPositiveButton
+                        }
+
+                        binding.apply {
+                            tvMyName.text = newName
+                            tvMyAge.text = FormatUtils.returnAge(newBirth)
+                            etMyEmail.setText(newEmail)
+                            etMyName.setText(newName)
+                            etMyBirth.setText(FormatUtils.formatDate(newBirth))
+                            etMyPhoneNumber.setText(FormatUtils.formatNumber(newPhoneNumber))
+                        }
+
+                        // 상태 업데이트
+                        isEditable = false
+                        enableEditTextFieldsInMyPage(false)
+
+                        binding.btnMySave.text = "EDIT"
+                        changeColorAfterEnabledClose()
+                    }
+                    setNegativeButton("아니요", null)
+                    show()
+                }
+            }
+        }
     }
 
     // edit눌렀을 때 editext 상태 변경
@@ -135,7 +120,6 @@ class MyPageFragment : Fragment() {
             etMyPhoneNumber.isEnabled = isEnabled
         }
     }
-
     // 수정 불가능 모드일 때 텍스트 컬러
     private fun changeColorAfterEnabledClose(){
         val closeColor = Color.parseColor("#E3E3E3")
