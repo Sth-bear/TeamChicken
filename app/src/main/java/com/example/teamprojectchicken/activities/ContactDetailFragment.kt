@@ -28,9 +28,7 @@ import com.example.teamprojectchicken.viewmodels.ContactViewModel
 
 private const val ARG_CONTACT = "contact"
 
-
 class ContactDetailFragment : Fragment() {
-    private lateinit var photoPickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var callback: OnBackPressedCallback
     private var viewModel = ContactViewModel()
     private var contact: Contact? = null
@@ -38,6 +36,7 @@ class ContactDetailFragment : Fragment() {
     private var imageUri: Uri? = null
     private lateinit var imageView: ImageView
     private val binding get() = _binding!!
+
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
@@ -79,7 +78,6 @@ class ContactDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentContactDetailBinding.inflate(inflater, container, false)
         editUserInfo()
-        Log.d("log_변경전","$contact")
         return binding.root
     }
 
@@ -102,7 +100,7 @@ class ContactDetailFragment : Fragment() {
             binding.apply {
                 etDetailName.setText(contact.name)
                 etDetailPhoneNumber.setText(FormatUtils.formatNumber(contact.number))
-                etDetailBirth.setText(contact.date.toString())
+                etDetailBirth.setText(FormatUtils.formatDate(contact.date))
                 etDetailEmail.setText(contact.email)
                 if (contact.uri == null) {
                     ivDetailProfile.setImageResource(contact.userImage)
@@ -172,13 +170,32 @@ class ContactDetailFragment : Fragment() {
                     setTitle("연락처 수정")
                     setMessage("정보수정을 완료하시겠습니까?")
                     setPositiveButton("예") { dialog, which ->
-                        contact?.name = binding.etDetailName.text.toString()
-                        contact?.email = binding.etDetailEmail.text.toString()
-                        // contact?.number = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
-                        contact?.date = binding.etDetailBirth.text.toString().toInt()
-                        Log.d("uri_", "${contact?.uri}, $imageUri")
-                        binding.tvDetailName.text = contact?.name
-                        binding.tvDetailAge.text = FormatUtils.returnAge(contact?.date.toString().toInt())
+                        val name = binding.etDetailName.text.toString()
+                        val date = FormatUtils.checkDate(binding.etDetailBirth.text.toString())
+                        val email = binding.etDetailEmail.text.toString()
+                        val phoneNumber = FormatUtils.checkPhoneNumber(binding.etDetailPhoneNumber.text.toString())
+                        val fragView = this@ContactDetailFragment.requireView()
+                        if (name.isBlank()) {
+                            FormatUtils.showSnackBar(fragView,"이름을 입력해주세요.")
+                            return@setPositiveButton
+                        }
+                        if (FormatUtils.checkFormat(fragView,date,phoneNumber)) {
+                            return@setPositiveButton
+                        }
+
+                        contact?.name = name
+                        contact?.date = date
+                        contact?.email = email
+                        contact?.number = phoneNumber
+
+                        binding.apply {
+                            tvDetailAge.text = FormatUtils.returnAge(date)
+                            tvDetailName.text = name
+                            etDetailBirth.setText(FormatUtils.formatDate(date))
+                            etDetailEmail.setText(email)
+                            etDetailName.setText(name)
+                            etDetailPhoneNumber.setText(FormatUtils.formatNumber(phoneNumber))
+                        }
 
                         isEditable = false
                         enableEditTextFields(false)
@@ -201,7 +218,7 @@ class ContactDetailFragment : Fragment() {
             etDetailBirth.isEnabled = isEnabled
             etDetailEmail.isEnabled = isEnabled
             etDetailPhoneNumber.isEnabled = isEnabled
-            ivDetailProfile.isEnabled=isEnabled
+            ivDetailProfile.isEnabled = isEnabled
         }
     }
 }
