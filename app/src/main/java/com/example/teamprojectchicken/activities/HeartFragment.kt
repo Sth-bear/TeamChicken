@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.activities.ContactListFragment.Companion.list
 import com.example.teamprojectchicken.adapters.ContactHeartAdapter
 import com.example.teamprojectchicken.data.DataSource
