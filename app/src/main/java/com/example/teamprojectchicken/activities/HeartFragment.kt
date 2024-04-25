@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +22,7 @@ import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.FragmentHeartBinding
+import com.example.teamprojectchicken.utils.isvisible
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
 
 class HeartFragment : Fragment() {
@@ -106,6 +108,11 @@ class HeartFragment : Fragment() {
                 return true
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as? FragmentActivity)?.isvisible()
     }
 
     override fun onPause() {

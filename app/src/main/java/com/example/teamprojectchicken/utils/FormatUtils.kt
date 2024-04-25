@@ -2,8 +2,13 @@ package com.example.teamprojectchicken.utils
 
 import android.content.Context
 import android.view.View
+import android.app.Activity
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import com.example.teamprojectchicken.R
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import java.time.LocalDate
 
 object FormatUtils {
@@ -79,4 +84,13 @@ object FormatUtils {
     const val VIEW_TYPE_LINEAR = 1
     const val VIEW_TYPE_GRID = 2
 
+}
+fun FragmentActivity.visible() {
+    val layout = findViewById<TabLayout>(R.id.tl_main_tapLayout)
+    layout.visibility = View.GONE
+}
+
+fun FragmentActivity.isvisible(){
+    val layout = findViewById<TabLayout>(R.id.tl_main_tapLayout)
+    layout.visibility = View.VISIBLE
 }

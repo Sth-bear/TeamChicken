@@ -3,11 +3,13 @@ package com.example.teamprojectchicken.activities
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.adapters.ViewPagerAdapter
 import com.example.teamprojectchicken.databinding.ActivityMainBinding
@@ -67,6 +69,7 @@ class MainActivity : AppCompatActivity() {
                 2 -> tab.icon = getDrawable(R.drawable.ic_mine)
             }
         }.attach()
+        binding.tlMainTapLayout.visibility = View.VISIBLE
 
         // 시작 탭
         tabLayout.getTabAt(0)?.select()
