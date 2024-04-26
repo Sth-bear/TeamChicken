@@ -19,6 +19,7 @@ import com.example.teamprojectchicken.adapters.ContactHeartAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.FragmentHeartBinding
+import com.example.teamprojectchicken.utils.FormatUtils
 import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_LINEAR
 import com.example.teamprojectchicken.utils.isvisible
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
@@ -47,13 +48,15 @@ class HeartFragment : Fragment() {
         goToCall()
     }
     private fun bindDefault() {
-        contactHeartAdapter.submitList(list)
         with(binding.rvHeartList) {
             adapter = contactHeartAdapter
-            layoutManager = if (viewModel.getType() == VIEW_TYPE_LINEAR) {
-                LinearLayoutManager(requireContext())
+            if (viewModel.getType() == com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_LINEAR) {
+                binding.ivSet.setImageResource(com.example.teamprojectchicken.R.drawable.ic_list)
+                layoutManager = LinearLayoutManager(requireContext())
+                itemTouch.attachToRecyclerView(this)
             } else {
-                GridLayoutManager(requireContext(),4)
+                layoutManager = GridLayoutManager(requireContext(),4)
+                binding.ivSet.setImageResource(com.example.teamprojectchicken.R.drawable.ic_grid)
             }
         }
     }
@@ -62,7 +65,6 @@ class HeartFragment : Fragment() {
             if (viewModel.getType() == VIEW_TYPE_LINEAR) {
                 gridBind()
             } else {
-                viewModel.setType()
                 linearBind()
             }
         }
