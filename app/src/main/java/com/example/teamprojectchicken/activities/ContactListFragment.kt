@@ -36,6 +36,7 @@ import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.AddcontactDialogBinding
 import com.example.teamprojectchicken.databinding.AddnotificationDialogBinding
+import com.example.teamprojectchicken.databinding.DeletecontactDialogBinding
 import com.example.teamprojectchicken.databinding.FragmentContactListBinding
 import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_LINEAR
 import com.example.teamprojectchicken.utils.isvisible
@@ -61,7 +62,6 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         contactListAdapter.submitList(list)
         bind()
-        addContact()
         ivSetOnClick()
         itemOnClick()
         searchContact()
@@ -143,20 +143,21 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
             .commit()
     }
     private fun delContact(position:Int) {
-        var builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("연락처 삭제")
-        builder.setMessage("해당 연락처를 삭제합니다.")
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val alertDialog: AlertDialog = builder.create()
+        val binding: DeletecontactDialogBinding = DeletecontactDialogBinding.inflate(layoutInflater)
+        alertDialog.setView(binding.root)
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val listener = DialogInterface.OnClickListener { p0, p1 ->
-            // 다이얼로그 인터페이스 생성, 버튼 클릭시 처리 이벤트
-            if (p1 == DialogInterface.BUTTON_POSITIVE ) {
-                contactListAdapter.removeItem(position)
-                Toast.makeText(requireContext(), "연락처 삭제 완료", Toast.LENGTH_SHORT).show()
-            }
+        binding.dlBtnDeleteCancel.setOnClickListener {
+            alertDialog.dismiss()
         }
-        builder.setPositiveButton("확인", listener)
-        builder.setNegativeButton("취소", null)
-        builder.show()
+        binding.dlBtnDeleteConfirm.setOnClickListener {
+            contactListAdapter.removeItem(position)
+            Toast.makeText(requireContext(), "연락처가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
     }
     private fun searchContact() {
         binding.svListSearch.isSubmitButtonEnabled = true
@@ -188,47 +189,45 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
     }
     // 연락처 추가 다이얼로그
     private fun addContact() {
-        binding.btnAdd.setOnClickListener {
-            val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-            val alertDialog: AlertDialog = builder.create()
-            val binding: AddcontactDialogBinding = AddcontactDialogBinding.inflate(layoutInflater)
-            alertDialog.setView(binding.root)
-            alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val alertDialog: AlertDialog = builder.create()
+        val binding: AddcontactDialogBinding = AddcontactDialogBinding.inflate(layoutInflater)
+        alertDialog.setView(binding.root)
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-            binding.dlBtnCancel.setOnClickListener {
-                alertDialog.dismiss()
-            }
-            binding.dlBtnRegister.setOnClickListener {
-                val name = binding.dlEtName.text.toString()
-                val number = binding.dlEtNumber.text.toString()
-                val email = binding.dlEtEmail.text.toString()
-                if (name.isNotEmpty() && number.isNotEmpty() && email.isNotEmpty()) {
-                    try {
-                        if (number.toInt() is Int) {
-                            contactListAdapter.contactList.add(
-                                Contact(
-                                    name = name,
-                                    number = number.toInt(),
-                                    email = email,
-                                    date = 20000000,
-                                    userImage = R.drawable.ic_mine,
-                                    heart = false,
-                                    uri = null
-                                )
-                            )
-                            contactListAdapter.notifyDataSetChanged()
-                            Toast.makeText(requireContext(), "연락처를 추가했습니다.", Toast.LENGTH_SHORT).show()
-                            alertDialog.dismiss()
-                        }
-                    } catch (e:java.lang.NumberFormatException) {
-                        Toast.makeText(requireContext(), "11자리 이하의 전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
-                    }
-                } else if (name.isEmpty() || number.isEmpty() || email.isEmpty()) {
-                    Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            alertDialog.show()
+        binding.dlBtnCancel.setOnClickListener {
+            alertDialog.dismiss()
         }
+        binding.dlBtnRegister.setOnClickListener {
+            val name = binding.dlEtName.text.toString()
+            val number = binding.dlEtNumber.text.toString()
+            val email = binding.dlEtEmail.text.toString()
+            if (name.isNotEmpty() && number.isNotEmpty() && email.isNotEmpty()) {
+                try {
+                    if (number.toInt() is Int) {
+                        contactListAdapter.contactList.add(
+                            Contact(
+                                name = name,
+                                number = number.toInt(),
+                                email = email,
+                                date = 20000000,
+                                userImage = R.drawable.ic_mine,
+                                heart = false,
+                                uri = null
+                            )
+                        )
+                        contactListAdapter.notifyDataSetChanged()
+                        Toast.makeText(requireContext(), "연락처를 추가했습니다.", Toast.LENGTH_SHORT).show()
+                        alertDialog.dismiss()
+                    }
+                } catch (e:java.lang.NumberFormatException) {
+                    Toast.makeText(requireContext(), "11자리 이하의 전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
+            } else if (name.isEmpty() || number.isEmpty() || email.isEmpty()) {
+                Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        alertDialog.show()
     }
 
     val itemTouch = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
