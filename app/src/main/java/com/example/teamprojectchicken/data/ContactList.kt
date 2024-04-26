@@ -22,7 +22,9 @@ fun contactList(): MutableList<Contact> {
         Contact(name = "아이유", number = 1094748427, email = "iu@user16.com", date = 19930516, userImage = R.drawable.user16, false, null),
         Contact(name = "박보검", number = 1078706279, email = "parkbo@user17.com", date = 19930616, userImage = R.drawable.user17, false, null),
         Contact(name = "서현진", number = 1093360916, email = "sehyon@user18.com", date = 19850227, userImage = R.drawable.user18, false, null),
-        Contact(name = "서강준", number = 1081994865, email = "seokang@user19.com", date = 19931012, userImage = R.drawable.user19, false, null),
-        Contact(name = "신예은", number = 1029662019, email = "yeeun@user20.com", date = 19980118, userImage = R.drawable.user20, false, null)
+        Contact(name = "서강준", number = 1081994865, email = "seokang@user19.com", date = 19931012, userImage = R.drawable.user19, true, null),
+        Contact(name = "신예은", number = 1029662019, email = "yeeun@user20.com", date = 19980118, userImage = R.drawable.user20, true, null),
+        Contact(name = "옥지", number = 1027924071, email = "okjiyam@dan.gun", date = 20161212, userImage = R.drawable.user23,true,null),
+        Contact(name = "LeBronJames", 1045712548, email = "raymone@james.sr", date = 19841230, userImage = R.drawable.user22, false,null)
     )
 }
