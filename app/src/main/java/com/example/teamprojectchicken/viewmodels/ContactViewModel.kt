@@ -3,12 +3,14 @@ package com.example.teamprojectchicken.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_GRID
 import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_LINEAR
 
 class ContactViewModel(): ViewModel() {
     private var data = MutableLiveData<Boolean>()
     private var viewType = MutableLiveData(1)
+
     val liveData: LiveData<Boolean>
         get() = data
 
@@ -30,7 +32,6 @@ class ContactViewModel(): ViewModel() {
             viewType.value = VIEW_TYPE_LINEAR
         }
     }
-
 }
 
 

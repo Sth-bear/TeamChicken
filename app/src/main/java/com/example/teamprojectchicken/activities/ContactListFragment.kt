@@ -5,7 +5,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -26,6 +25,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,7 +65,6 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         ivSetOnClick()
         itemOnClick()
         searchContact()
-
         binding.btnAdd.setOnClickListener {
             showPopup(binding.btnAdd)
         }
@@ -121,7 +120,7 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
     private fun itemOnClick() {
         contactListAdapter.itemClick = object : ContactListAdapter.ItemClick {
             override fun onClick(view: View, position: Int, contact: Contact) {
-                goToDetailContact(contact)
+                goToDetailContact(contact,position)
 
             }
             override fun longClick(position: Int) {
@@ -129,8 +128,18 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
             }
         }
     }
-    private fun goToDetailContact(contact: Contact){
-        val fragment = ContactDetailFragment.newInstance(contact)
+
+    private fun deleteInDetailPageAfterView (){
+        setFragmentResultListener("deleteContact"){
+            key, bundle -> val position = bundle.getInt("position", -1)
+            val isDeleted = bundle.getBoolean("isDeleted",false)
+            if (isDeleted && position != -1){
+                contactListAdapter.removeItem(position)
+            }
+        }
+    }
+    private fun goToDetailContact(contact: Contact, position: Int){
+        val fragment = ContactDetailFragment.newInstance(contact,position)
         parentFragmentManager.beginTransaction()
             .setCustomAnimations(
                 R.anim.fade_in,
@@ -185,6 +194,7 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
     }
     override fun onPause() {
         super.onPause()
+        deleteInDetailPageAfterView()
         contactListAdapter.submitList(list)
     }
     // 연락처 추가 다이얼로그

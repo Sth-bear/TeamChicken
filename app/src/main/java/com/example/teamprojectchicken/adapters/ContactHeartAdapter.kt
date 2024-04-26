@@ -110,4 +110,6 @@ class ContactHeartAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         this.contactList = items
         notifyDataSetChanged()
     }
+
+
 }

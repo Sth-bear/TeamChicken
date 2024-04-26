@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.activities.ContactListFragment.Companion.list
 import com.example.teamprojectchicken.adapters.ContactHeartAdapter
+import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.data.DataSource
 import com.example.teamprojectchicken.databinding.FragmentHeartBinding
@@ -30,8 +32,15 @@ class HeartFragment : Fragment() {
         ContactHeartAdapter()
     }
     private val viewModel = ContactViewModel()
+    val contactListAdapter by lazy {
+        ContactListAdapter()
+    }
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,6 +55,7 @@ class HeartFragment : Fragment() {
         ivSetOnClick()
         goToHeartDetail()
         goToCall()
+
     }
     private fun bindDefault() {
         with(binding.rvHeartList) {
@@ -58,6 +68,18 @@ class HeartFragment : Fragment() {
                 layoutManager = GridLayoutManager(requireContext(),4)
                 binding.ivSet.setImageResource(com.example.teamprojectchicken.R.drawable.ic_grid)
             }
+        }
+    }
+    fun deletedContactInHeartFrag(){
+        setFragmentResultListener("deleteContact") { requestKey, bundle ->
+            // 번들에서 'position'과 'isDeleted' 값을 가져옴
+            val position = bundle.getInt("position")
+            val isDeleted = bundle.getBoolean("isDeleted")
+
+           // if (isDeleted) {
+                // 아이템이 삭제되었다면, 해당 위치의 아이템을 어댑터에서 제거
+                //contactHeartAdapter.removeItem(position)
+           // }
         }
     }
     private fun ivSetOnClick() {
@@ -92,7 +114,7 @@ class HeartFragment : Fragment() {
     private fun goToHeartDetail() {
         contactHeartAdapter.itemClick = object : ContactHeartAdapter.ItemClick {
             override fun onClick(view: View, position: Int, contact: Contact) {
-                val fragment = ContactDetailFragment.newInstance(contact)
+                val fragment = ContactDetailFragment.newInstance(contact,position)
                 parentFragmentManager.beginTransaction()
                     .setCustomAnimations(
                         R.anim.fade_in,
@@ -121,10 +143,22 @@ class HeartFragment : Fragment() {
         })
     }
 
+    override fun onStart() {
+        super.onStart()
+
+    }
+
     override fun onResume() {
         super.onResume()
         (activity as? FragmentActivity)?.isvisible()
-        contactHeartAdapter.submitList(list)
+      contactHeartAdapter.submitList(list)
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        deletedContactInHeartFrag()
+
     }
 
     private fun filter(text:String?) {

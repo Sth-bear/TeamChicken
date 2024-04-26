@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
@@ -26,9 +27,9 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var itemClick: ItemClick? = null
 
     fun removeItem(position: Int) {
-        contactList.removeAt(position)
-        notifyItemRemoved(position)
-        notifyItemRangeRemoved(position, itemCount - position)
+            contactList.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeRemoved(position, itemCount - position)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType) {

@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +20,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Observer
 import com.example.teamprojectchicken.R
+import com.example.teamprojectchicken.adapters.ContactListAdapter
 import com.example.teamprojectchicken.data.Contact
 import com.example.teamprojectchicken.databinding.DeletecontactDialogBinding
 import com.example.teamprojectchicken.databinding.EditcontactDetailDialogBinding
@@ -33,6 +35,7 @@ import com.example.teamprojectchicken.viewmodels.ContactViewModel
 import com.example.teamprojectchicken.utils.visible
 
 private const val ARG_CONTACT = "contact"
+private const val ARG_POSITION = "position"
 
 class ContactDetailFragment : Fragment() {
     private lateinit var callback: OnBackPressedCallback
@@ -41,8 +44,11 @@ class ContactDetailFragment : Fragment() {
     private var _binding: FragmentContactDetailBinding? = null
     private var imageUri: Uri? = null
     private lateinit var imageView: ImageView
+    private var position: Int? = null
     private var editMode = false
-
+    val contactListAdapter by lazy {
+        ContactListAdapter()
+    }
 
     private val binding get() = _binding!!
 
@@ -65,12 +71,12 @@ class ContactDetailFragment : Fragment() {
         }
 
 
-
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             contact = it.getParcelable(ARG_CONTACT, Contact::class.java)
+            position = it.getInt(ARG_POSITION)
         }
 
     }
@@ -84,7 +90,7 @@ class ContactDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentContactDetailBinding.inflate(inflater, container, false)
         editUserInfo()
-       (activity as? FragmentActivity)?.visible()
+        (activity as? FragmentActivity)?.visible()
         heart()
         return binding.root
     }
@@ -114,10 +120,11 @@ class ContactDetailFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(contact: Contact) =
+        fun newInstance(contact: Contact, position: Int) =
             ContactDetailFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_CONTACT, contact)
+                    putInt(ARG_POSITION, position)
                 }
             }
     }
@@ -131,7 +138,7 @@ class ContactDetailFragment : Fragment() {
     }
 
     //초기 유저 정보 디스플레이
-    private fun displayInfo(){
+    private fun displayInfo() {
         contact?.let { contact ->
             binding.apply {
                 etDetailName.setText(contact.name)
@@ -171,6 +178,7 @@ class ContactDetailFragment : Fragment() {
             }
         }
     }
+
     //권한 요청
     private fun permissionLauncher() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -184,7 +192,7 @@ class ContactDetailFragment : Fragment() {
     fun editUserInfo() {
         var isEditable = false
         binding.btnDetailSave.setOnClickListener {
-            if (!isEditable){
+            if (!isEditable) {
                 imageView = binding.ivDetailProfile
                 binding.ivDetailProfile.setOnClickListener {
                     permissionLauncher()
@@ -192,14 +200,37 @@ class ContactDetailFragment : Fragment() {
             }
             isEditable = !isEditable
             updateEditMode(isEditable)
-            deleteContact(true,true)
+            deleteContactMode(true, true)
 
         }
     }
-    private fun deleteContact(isEditable: Boolean, editmode : Boolean){
-        if (isEditable && editmode){
+
+    private fun deleteContactMode(isEditable: Boolean, editmode: Boolean) {
+        if (isEditable && editmode) {
             binding.tvDeleteNumber.visibility = View.VISIBLE
-        }else if (!isEditable && !editmode){
+            binding.tvDeleteNumber.setOnClickListener {
+                val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                val alertDialog: AlertDialog = builder.create()
+                val binding: DeletecontactDialogBinding =
+                    DeletecontactDialogBinding.inflate(layoutInflater)
+                alertDialog.setView(binding.root)
+                alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                binding.dlBtnDeleteCancel.setOnClickListener {
+                    alertDialog.dismiss()
+                }
+                binding.dlBtnDeleteConfirm.setOnClickListener {
+                    Toast.makeText(requireContext(), "연락처가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                    parentFragmentManager.popBackStack()
+                    alertDialog.dismiss()
+                    setFragmentResult(
+                        "deleteContact",
+                        bundleOf("position" to position, "isDeleted" to true)
+                    )
+
+                }
+                alertDialog.show()
+            }
+        } else if (!isEditable && !editmode) {
             binding.tvDeleteNumber.visibility = View.GONE
         }
     }
@@ -220,20 +251,22 @@ class ContactDetailFragment : Fragment() {
         enableEditTextFields(true)
     }
 
+
     private fun confirmEdit() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val alertDialog: AlertDialog = builder.create()
-        val binding: EditcontactDetailDialogBinding = EditcontactDetailDialogBinding.inflate(layoutInflater)
+        val binding: EditcontactDetailDialogBinding =
+            EditcontactDetailDialogBinding.inflate(layoutInflater)
         alertDialog.setView(binding.root)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         binding.dlBtnEditCancel.setOnClickListener {
-            deleteContact(true,true)
+            deleteContactMode(true, true)
             alertDialog.dismiss()
         }
         binding.dlBtnEditConfirm.setOnClickListener {
             saveUserInfo()
-            deleteContact(false,false)
+            deleteContactMode(false, false)
             Toast.makeText(requireContext(), "정보가 수정되었습니다.", Toast.LENGTH_SHORT).show()
             alertDialog.dismiss()
         }
@@ -302,5 +335,5 @@ class ContactDetailFragment : Fragment() {
 
 }
 
-    //editText enable 관리 함수
+//editText enable 관리 함수
 
