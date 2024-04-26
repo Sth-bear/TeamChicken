@@ -55,8 +55,6 @@ class HeartFragment : Fragment() {
             } else {
                 GridLayoutManager(requireContext(),4)
             }
-
-
         }
     }
     private fun ivSetOnClick() {
