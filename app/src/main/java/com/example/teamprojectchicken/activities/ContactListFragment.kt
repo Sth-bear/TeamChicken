@@ -167,7 +167,7 @@ class ContactListFragment : Fragment() {
     }
     override fun onPause() {
         super.onPause()
-        contactListAdapter.notifyItemRangeChanged(0, list.size)
+        contactListAdapter.submitList(list)
     }
     // 연락처 추가 다이얼로그
     private fun addContact() {
