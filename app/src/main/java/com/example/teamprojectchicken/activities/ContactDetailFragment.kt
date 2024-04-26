@@ -80,25 +80,13 @@ class ContactDetailFragment : Fragment() {
         editUserInfo()
        (activity as? FragmentActivity)?.visible()
         heart()
-
-//        val a = view?.findViewById<TabLayout>(R.id.tl_main_tapLayout)
-//        a?.visibility = View.GONE
-//
         return binding.root
     }
-
 
     //ContactListFragment에서 받아온 값 출력
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         displayInfo()
-        imageView = binding.ivDetailProfile
-        binding.ivDetailProfile.setOnClickListener {
-            permissionLauncher()
-        }
-
-
     }
 
     override fun onAttach(context: Context) {
@@ -190,8 +178,15 @@ class ContactDetailFragment : Fragment() {
     fun editUserInfo() {
         var isEditable = false
         binding.btnDetailSave.setOnClickListener {
+            if (!isEditable){
+                imageView = binding.ivDetailProfile
+                binding.ivDetailProfile.setOnClickListener {
+                    permissionLauncher()
+                }
+            }
             isEditable = !isEditable
             updateEditMode(isEditable)
+
         }
     }
 
