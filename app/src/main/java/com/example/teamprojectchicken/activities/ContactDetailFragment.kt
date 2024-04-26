@@ -37,7 +37,6 @@ class ContactDetailFragment : Fragment() {
     private lateinit var imageView: ImageView
     private var editMode = false
 
-
     private val binding get() = _binding!!
 
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
@@ -57,8 +56,6 @@ class ContactDetailFragment : Fragment() {
                 contact?.uri = imageUri
             }
         }
-
-
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -241,6 +238,10 @@ class ContactDetailFragment : Fragment() {
             return false
         }
         return true
+    }
+
+    private fun deleteContact(){
+
     }
 
     private fun updateContactInfo(name: String, date: Int, email: String, phoneNumber: Int) {
