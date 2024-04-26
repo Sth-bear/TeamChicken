@@ -76,16 +76,14 @@ class ContactListFragment : Fragment() {
     private fun ivSetOnClick() {
         binding.ivSet.setOnClickListener {
             if (viewModel.getType() == VIEW_TYPE_LINEAR) {
-                viewModel.setType()
-                contactListAdapter.viewType = viewModel.getType()
                 gridLayout()
             } else {
-                viewModel.setType()
                 linearLayout()
             }
         }
     }
     private fun linearLayout() {
+        viewModel.setType()
         with(binding.rvListList) {
             contactListAdapter.viewType = viewModel.getType()
             adapter = contactListAdapter
@@ -95,7 +93,9 @@ class ContactListFragment : Fragment() {
         }
     }
     private fun gridLayout() {
+        viewModel.setType()
         with(binding.rvListList) {
+            contactListAdapter.viewType = viewModel.getType()
             adapter = contactListAdapter
             layoutManager = GridLayoutManager(requireContext(), 4)
             binding.ivSet.setImageResource(R.drawable.ic_grid)
