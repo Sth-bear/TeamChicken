@@ -2,6 +2,7 @@ package com.example.teamprojectchicken.activities
 
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -67,6 +68,7 @@ class MainActivity : AppCompatActivity() {
                 2 -> tab.icon = getDrawable(R.drawable.ic_mine)
             }
         }.attach()
+        binding.tlMainTapLayout.visibility = View.VISIBLE
 
         // 시작 탭
         tabLayout.getTabAt(0)?.select()

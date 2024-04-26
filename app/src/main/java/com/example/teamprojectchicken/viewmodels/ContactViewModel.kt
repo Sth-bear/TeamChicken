@@ -3,6 +3,8 @@ package com.example.teamprojectchicken.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_GRID
+import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_LINEAR
 
 class ContactViewModel(): ViewModel() {
     private var data = MutableLiveData<Boolean>()
@@ -22,10 +24,10 @@ class ContactViewModel(): ViewModel() {
     }
 
     fun setType() {
-        if (viewType.value == 1) {
-            viewType.value = 2
+        if (viewType.value == VIEW_TYPE_LINEAR) {
+            viewType.value = VIEW_TYPE_GRID
         } else {
-            viewType.value = 1
+            viewType.value = VIEW_TYPE_LINEAR
         }
     }
 
