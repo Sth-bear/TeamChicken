@@ -4,6 +4,8 @@ import  android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +24,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
+import com.example.teamprojectchicken.databinding.DeletecontactDialogBinding
+import com.example.teamprojectchicken.databinding.EditcontactDetailDialogBinding
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.utils.FormatUtils
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
@@ -207,13 +212,22 @@ class ContactDetailFragment : Fragment() {
     }
 
     private fun confirmEdit() {
-        AlertDialog.Builder(context).apply {
-            setTitle("연락처 수정")
-            setMessage("정보수정을 완료하시겠습니까?")
-            setPositiveButton("예") { _, _ -> saveUserInfo() }
-            setNegativeButton("아니요", null)
-            show()
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val alertDialog: AlertDialog = builder.create()
+        val binding: EditcontactDetailDialogBinding = EditcontactDetailDialogBinding.inflate(layoutInflater)
+        alertDialog.setView(binding.root)
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        binding.dlBtnEditCancel.setOnClickListener {
+            alertDialog.dismiss()
         }
+        binding.dlBtnEditConfirm.setOnClickListener {
+            saveUserInfo()
+            Toast.makeText(requireContext(), "연락처가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
+
     }
 
     //
