@@ -183,6 +183,7 @@ class ContactDetailFragment : Fragment() {
             }
             isEditable = !isEditable
             updateEditMode(isEditable)
+            deleteContact(isEditable)
 
         }
     }
@@ -240,8 +241,10 @@ class ContactDetailFragment : Fragment() {
         return true
     }
 
-    private fun deleteContact(){
-
+    private fun deleteContact(isEditable: Boolean){
+        if (isEditable){
+            binding.tvDeleteNumber.visibility = View.VISIBLE
+        }
     }
 
     private fun updateContactInfo(name: String, date: Int, email: String, phoneNumber: Int) {
