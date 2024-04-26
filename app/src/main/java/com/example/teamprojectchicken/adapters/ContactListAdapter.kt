@@ -124,7 +124,8 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun submitList(items: MutableList<Contact>) {
-        this.contactList = items.sortedBy { it.name }.toMutableList()
+        items.sortBy { it.name }
+        this.contactList = items
         notifyDataSetChanged()
     }
 }
