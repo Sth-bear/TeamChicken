@@ -75,7 +75,7 @@ class ContactDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentContactDetailBinding.inflate(inflater, container, false)
         editUserInfo()
-       (activity as? FragmentActivity)?.visible()
+        (activity as? FragmentActivity)?.visible()
         heart()
         return binding.root
     }
@@ -122,7 +122,7 @@ class ContactDetailFragment : Fragment() {
     }
 
     //초기 유저 정보 디스플레이
-    private fun displayInfo(){
+    private fun displayInfo() {
         contact?.let { contact ->
             binding.apply {
                 etDetailName.setText(contact.name)
@@ -162,6 +162,7 @@ class ContactDetailFragment : Fragment() {
             }
         }
     }
+
     //권한 요청
     private fun permissionLauncher() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -175,7 +176,7 @@ class ContactDetailFragment : Fragment() {
     fun editUserInfo() {
         var isEditable = false
         binding.btnDetailSave.setOnClickListener {
-            if (!isEditable){
+            if (!isEditable) {
                 imageView = binding.ivDetailProfile
                 binding.ivDetailProfile.setOnClickListener {
                     permissionLauncher()
@@ -183,7 +184,7 @@ class ContactDetailFragment : Fragment() {
             }
             isEditable = !isEditable
             updateEditMode(isEditable)
-            deleteContact(isEditable)
+            deleteContact(isEditable, editMode)
 
         }
     }
@@ -196,7 +197,6 @@ class ContactDetailFragment : Fragment() {
         } else {
             confirmEdit()
         }
-        editMode = false
     }
 
     private fun enterEditMode() {
@@ -208,7 +208,11 @@ class ContactDetailFragment : Fragment() {
         AlertDialog.Builder(context).apply {
             setTitle("연락처 수정")
             setMessage("정보수정을 완료하시겠습니까?")
-            setPositiveButton("예") { _, _ -> saveUserInfo() }
+            setPositiveButton("예") { _, _ ->
+                saveUserInfo()
+                editMode = false
+                deleteContact(false,editMode)
+            }
             setNegativeButton("아니요", null)
             show()
         }
@@ -228,6 +232,7 @@ class ContactDetailFragment : Fragment() {
 
         binding.btnDetailSave.text = "EDIT"
         enableEditTextFields(false)
+
     }
 
     private fun validateUserInfo(name: String, date: Int, phoneNumber: Int): Boolean {
@@ -241,9 +246,12 @@ class ContactDetailFragment : Fragment() {
         return true
     }
 
-    private fun deleteContact(isEditable: Boolean){
-        if (isEditable){
+    private fun deleteContact(isEditable: Boolean, editMode: Boolean) {
+        if (!editMode) {
             binding.tvDeleteNumber.visibility = View.VISIBLE
+        }
+        if (!isEditable && !isEditable) {
+            binding.tvDeleteNumber.visibility = View.GONE
         }
     }
 
@@ -253,6 +261,7 @@ class ContactDetailFragment : Fragment() {
             this.date = date
             this.email = email
             this.number = phoneNumber
+
         }
     }
 
@@ -281,5 +290,5 @@ class ContactDetailFragment : Fragment() {
 
 }
 
-    //editText enable 관리 함수
+//editText enable 관리 함수
 
