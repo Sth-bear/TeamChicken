@@ -122,6 +122,7 @@ class HeartFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as? FragmentActivity)?.isvisible()
+        contactHeartAdapter.submitList(list)
     }
 
     private fun filter(text:String?) {
