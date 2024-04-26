@@ -4,6 +4,8 @@ import  android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +24,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import com.example.teamprojectchicken.R
 import com.example.teamprojectchicken.data.Contact
+import com.example.teamprojectchicken.databinding.DeletecontactDialogBinding
+import com.example.teamprojectchicken.databinding.EditcontactDetailDialogBinding
 import com.example.teamprojectchicken.databinding.FragmentContactDetailBinding
 import com.example.teamprojectchicken.utils.FormatUtils
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
@@ -36,6 +41,7 @@ class ContactDetailFragment : Fragment() {
     private var imageUri: Uri? = null
     private lateinit var imageView: ImageView
     private var editMode = false
+
 
     private val binding get() = _binding!!
 
@@ -57,6 +63,8 @@ class ContactDetailFragment : Fragment() {
             }
         }
 
+
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +83,7 @@ class ContactDetailFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentContactDetailBinding.inflate(inflater, container, false)
         editUserInfo()
-        (activity as? FragmentActivity)?.visible()
+       (activity as? FragmentActivity)?.visible()
         heart()
         return binding.root
     }
@@ -122,7 +130,7 @@ class ContactDetailFragment : Fragment() {
     }
 
     //초기 유저 정보 디스플레이
-    private fun displayInfo() {
+    private fun displayInfo(){
         contact?.let { contact ->
             binding.apply {
                 etDetailName.setText(contact.name)
@@ -162,7 +170,6 @@ class ContactDetailFragment : Fragment() {
             }
         }
     }
-
     //권한 요청
     private fun permissionLauncher() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -176,7 +183,7 @@ class ContactDetailFragment : Fragment() {
     fun editUserInfo() {
         var isEditable = false
         binding.btnDetailSave.setOnClickListener {
-            if (!isEditable) {
+            if (!isEditable){
                 imageView = binding.ivDetailProfile
                 binding.ivDetailProfile.setOnClickListener {
                     permissionLauncher()
@@ -184,7 +191,6 @@ class ContactDetailFragment : Fragment() {
             }
             isEditable = !isEditable
             updateEditMode(isEditable)
-            deleteContact(isEditable, editMode)
 
         }
     }
@@ -197,6 +203,7 @@ class ContactDetailFragment : Fragment() {
         } else {
             confirmEdit()
         }
+        editMode = false
     }
 
     private fun enterEditMode() {
@@ -205,17 +212,22 @@ class ContactDetailFragment : Fragment() {
     }
 
     private fun confirmEdit() {
-        AlertDialog.Builder(context).apply {
-            setTitle("연락처 수정")
-            setMessage("정보수정을 완료하시겠습니까?")
-            setPositiveButton("예") { _, _ ->
-                saveUserInfo()
-                editMode = false
-                deleteContact(false,editMode)
-            }
-            setNegativeButton("아니요", null)
-            show()
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val alertDialog: AlertDialog = builder.create()
+        val binding: EditcontactDetailDialogBinding = EditcontactDetailDialogBinding.inflate(layoutInflater)
+        alertDialog.setView(binding.root)
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        binding.dlBtnEditCancel.setOnClickListener {
+            alertDialog.dismiss()
         }
+        binding.dlBtnEditConfirm.setOnClickListener {
+            saveUserInfo()
+            Toast.makeText(requireContext(), "연락처가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
+
     }
 
     //
@@ -232,7 +244,6 @@ class ContactDetailFragment : Fragment() {
 
         binding.btnDetailSave.text = "EDIT"
         enableEditTextFields(false)
-
     }
 
     private fun validateUserInfo(name: String, date: Int, phoneNumber: Int): Boolean {
@@ -246,22 +257,12 @@ class ContactDetailFragment : Fragment() {
         return true
     }
 
-    private fun deleteContact(isEditable: Boolean, editMode: Boolean) {
-        if (!editMode) {
-            binding.tvDeleteNumber.visibility = View.VISIBLE
-        }
-        if (!isEditable && !isEditable) {
-            binding.tvDeleteNumber.visibility = View.GONE
-        }
-    }
-
     private fun updateContactInfo(name: String, date: Int, email: String, phoneNumber: Int) {
         contact?.apply {
             this.name = name
             this.date = date
             this.email = email
             this.number = phoneNumber
-
         }
     }
 
@@ -290,5 +291,5 @@ class ContactDetailFragment : Fragment() {
 
 }
 
-//editText enable 관리 함수
+    //editText enable 관리 함수
 
