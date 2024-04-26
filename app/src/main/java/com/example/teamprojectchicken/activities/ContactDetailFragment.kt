@@ -191,7 +191,15 @@ class ContactDetailFragment : Fragment() {
             }
             isEditable = !isEditable
             updateEditMode(isEditable)
+            deleteContact(true,true)
 
+        }
+    }
+    private fun deleteContact(isEditable: Boolean, editmode : Boolean){
+        if (isEditable && editmode){
+            binding.tvDeleteNumber.visibility = View.VISIBLE
+        }else if (!isEditable && !editmode){
+            binding.tvDeleteNumber.visibility = View.GONE
         }
     }
 
@@ -219,11 +227,13 @@ class ContactDetailFragment : Fragment() {
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         binding.dlBtnEditCancel.setOnClickListener {
+            deleteContact(true,true)
             alertDialog.dismiss()
         }
         binding.dlBtnEditConfirm.setOnClickListener {
             saveUserInfo()
-            Toast.makeText(requireContext(), "연락처가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+            deleteContact(false,false)
+            Toast.makeText(requireContext(), "정보가 수정되었습니다.", Toast.LENGTH_SHORT).show()
             alertDialog.dismiss()
         }
         alertDialog.show()
