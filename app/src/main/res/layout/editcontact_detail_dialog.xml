@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="wrap_content"
+android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:padding="33dp">
 
@@ -21,13 +21,11 @@ android:padding="33dp">
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
         android:background="@android:color/transparent"
+        android:fontFamily="@font/pretendardmedium"
         android:text="연락처 수정"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:fontFamily="@font/pretendardmedium"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,21 +37,19 @@ android:padding="33dp">
         android:layout_marginTop="24dp"
         android:layout_marginEnd="40dp"
         android:background="@android:color/transparent"
+        android:fontFamily="@font/pretendardmedium"
         android:text="정보수정을 완료하시겠습니까?"
         android:textSize="20sp"
-        android:fontFamily="@font/pretendardmedium"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/dl_btn_edit_cancel"
-        android:layout_width="90dp"
+        android:layout_width="103dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="40dp"
+        android:layout_margin="40dp"
         android:background="@drawable/btn_dialog_cancel"
         android:fontFamily="@font/pretendardmedium"
         android:text="취소"
@@ -66,12 +62,10 @@ android:padding="33dp">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/dl_btn_edit_confirm"
-        android:layout_width="90dp"
+        android:layout_width="103dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginTop="32dp"
         android:layout_marginBottom="40dp"
+        android:layout_marginEnd="40dp"
         android:background="@drawable/btn_dialog_confirm"
         android:backgroundTint="@color/mainColor"
         android:fontFamily="@font/pretendardmedium"
@@ -79,9 +73,10 @@ android:padding="33dp">
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/dl_btn_edit_cancel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_text" />
+        app:layout_constraintTop_toTopOf="@+id/dl_btn_edit_cancel"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
