@@ -129,4 +129,10 @@ class ContactListAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         this.contactList = items
         notifyDataSetChanged()
     }
+
+    fun addList(items: Contact) {
+        this.contactList.add(items)
+        contactList.sortBy { it.name }
+        notifyDataSetChanged()
+    }
 }
