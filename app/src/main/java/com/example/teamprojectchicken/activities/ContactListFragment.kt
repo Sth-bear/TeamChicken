@@ -1,19 +1,14 @@
 package com.example.teamprojectchicken.activities
 
+import android.app.AlarmManager
 import android.app.AlertDialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.media.AudioAttributes
-import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -22,8 +17,6 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -40,14 +33,17 @@ import com.example.teamprojectchicken.databinding.FragmentContactListBinding
 import com.example.teamprojectchicken.utils.FormatUtils.VIEW_TYPE_LINEAR
 import com.example.teamprojectchicken.utils.isvisible
 import com.example.teamprojectchicken.viewmodels.ContactViewModel
+
 class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
     private val binding by lazy { FragmentContactListBinding.inflate(layoutInflater) }
     private val viewModel = ContactViewModel()
     val contactListAdapter by lazy {
         ContactListAdapter()
     }
+
     companion object {
         var list: MutableList<Contact> = DataSource.getDataSource().getContactList()
+        const val REQUEST_CODE = 111
     }
 
     override fun onCreateView(
@@ -83,7 +79,7 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
                 layoutManager = LinearLayoutManager(requireContext())
                 itemTouch.attachToRecyclerView(this)
             } else {
-                layoutManager = GridLayoutManager(requireContext(),4)
+                layoutManager = GridLayoutManager(requireContext(), 4)
                 binding.ivSet.setImageResource(R.drawable.ic_grid)
             }
         }
@@ -98,6 +94,7 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
             }
         }
     }
+
     private fun linearLayout() {
         viewModel.setType()
         with(binding.rvListList) {
@@ -108,6 +105,7 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
             itemTouch.attachToRecyclerView(this)
         }
     }
+
     private fun gridLayout() {
         viewModel.setType()
         with(binding.rvListList) {
@@ -117,18 +115,21 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
             binding.ivSet.setImageResource(R.drawable.ic_grid)
         }
     }
+
     private fun itemOnClick() {
         contactListAdapter.itemClick = object : ContactListAdapter.ItemClick {
             override fun onClick(view: View, position: Int, contact: Contact) {
                 goToDetailContact(contact)
 
             }
+
             override fun longClick(position: Int) {
                 delContact(position)
             }
         }
     }
-    private fun goToDetailContact(contact: Contact){
+
+    private fun goToDetailContact(contact: Contact) {
         val fragment = ContactDetailFragment.newInstance(contact)
         parentFragmentManager.beginTransaction()
             .setCustomAnimations(
@@ -141,7 +142,8 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
             .addToBackStack(null)
             .commit()
     }
-    private fun delContact(position:Int) {
+
+    private fun delContact(position: Int) {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val alertDialog: AlertDialog = builder.create()
         val binding: DeletecontactDialogBinding = DeletecontactDialogBinding.inflate(layoutInflater)
@@ -158,6 +160,7 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         }
         alertDialog.show()
     }
+
     private fun searchContact() {
         binding.svListSearch.isSubmitButtonEnabled = true
         binding.svListSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
@@ -172,20 +175,26 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
             }
         })
     }
-    private fun filter(text : String?) {
-        val searchText = text?.replace("-","")
+
+    private fun filter(text: String?) {
+        val searchText = text?.replace("-", "")
         val filteredList = ArrayList<Contact>()
-        for(item in list) {
-            if(item.name.contains(searchText?:"") || "0${item.number}".contains(searchText?:"")) {
+        for (item in list) {
+            if (item.name.contains(searchText ?: "") || "0${item.number}".contains(
+                    searchText ?: ""
+                )
+            ) {
                 filteredList.add(item)
             }
         }
         contactListAdapter.submitList(filteredList)
     }
+
     override fun onPause() {
         super.onPause()
         contactListAdapter.submitList(list)
     }
+
     // 연락처 추가 다이얼로그
     private fun addContact() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
@@ -218,8 +227,9 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
                         Toast.makeText(requireContext(), "연락처를 추가했습니다.", Toast.LENGTH_SHORT).show()
                         alertDialog.dismiss()
                     }
-                } catch (e:java.lang.NumberFormatException) {
-                    Toast.makeText(requireContext(), "11자리 이하의 전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                } catch (e: java.lang.NumberFormatException) {
+                    Toast.makeText(requireContext(), "11자리 이하의 전화번호를 입력해주세요.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             } else if (name.isEmpty() || number.isEmpty() || email.isEmpty()) {
                 Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
@@ -228,33 +238,35 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         alertDialog.show()
     }
 
-    val itemTouch = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
-        override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
-        ): Boolean {
-            return false
-        }
-
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            val position = viewHolder.adapterPosition
-            val phoneNumber = DataSource.getDataSource().getContactList()[position].number
-            val intent = Intent(Intent.ACTION_DIAL).apply {
-                data = Uri.parse("tel:0$phoneNumber")
+    val itemTouch =
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
             }
-            viewHolder.itemView.context.startActivity(intent)
 
-            viewHolder.itemView.translationX = 0f // 아이템이 사라지는 마술
-            contactListAdapter.notifyDataSetChanged()
-        }
-    })
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val phoneNumber = DataSource.getDataSource().getContactList()[position].number
+                val intent = Intent(Intent.ACTION_DIAL).apply {
+                    data = Uri.parse("tel:0$phoneNumber")
+                }
+                viewHolder.itemView.context.startActivity(intent)
+
+                viewHolder.itemView.translationX = 0f // 아이템이 사라지는 마술
+                contactListAdapter.notifyDataSetChanged()
+            }
+        })
 
     // 알림 추가 다이얼로그
     private fun addNotification() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val alertDialog: AlertDialog = builder.create()
-        val binding: AddnotificationDialogBinding = AddnotificationDialogBinding.inflate(layoutInflater)
+        val binding: AddnotificationDialogBinding =
+            AddnotificationDialogBinding.inflate(layoutInflater)
         alertDialog.setView(binding.root)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
@@ -264,7 +276,7 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         binding.btnNotificationDlSave.setOnClickListener {
             val name = binding.etNotificationDlName.text.toString()
             val number = binding.etNotificationDlNumber.text.toString()
-            var time = 0
+            var minutes = 0
 
             // 라디오 버튼
             val radioGroup = binding.radioGroupNotificationDl
@@ -274,24 +286,25 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
             val radio30 = binding.radioBtnNotificationDl30
 
             if (radioOff.isChecked) {
-                time = 0
+                minutes = 0
             } else if (radio5.isChecked) {
-                time = 5
+                minutes = 5
             } else if (radio15.isChecked) {
-                time = 15
+                minutes = 15
             } else if (radio30.isChecked) {
-                time = 30
+                minutes = 30
             }
 
             if (name.isNotEmpty() && number.isNotEmpty() && radioGroup.checkedRadioButtonId > -1) {
                 try {
                     if (number.toInt() is Int) {
-                        notification(name, number.toInt(), time)
+                        setAlarm(minutes)
                         Toast.makeText(requireContext(), "알림을 추가했습니다.", Toast.LENGTH_SHORT).show()
                         alertDialog.dismiss()
                     }
-                } catch (e:java.lang.NumberFormatException) {
-                    Toast.makeText(requireContext(), "11자리 이하의 숫자를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                } catch (e: java.lang.NumberFormatException) {
+                    Toast.makeText(requireContext(), "11자리 이하의 숫자를 입력해주세요.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             } else if (name.isEmpty() || number.isEmpty() || radioGroup.checkedRadioButtonId == -1) {
                 Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
@@ -300,61 +313,12 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         alertDialog.show()
     }
 
-    // 알림 창
-    fun notification(name: String, number: Int, time: Int) {
-        val manager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val builder: NotificationCompat.Builder
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            // 26 버전 이상
-            val channelId="one-channel"
-            val channelName="My Channel One"
-            val channel = NotificationChannel(
-                channelId,
-                channelName,
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply {
-                // 채널에 다양한 정보 설정
-                description = "My Channel One Description"
-                setShowBadge(true)
-                val uri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                val audioAttributes = AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .build()
-                setSound(uri, audioAttributes)
-                enableVibration(true)
-            }
-            // 채널을 NotificationManager에 등록
-            manager.createNotificationChannel(channel)
-
-            // 채널을 이용하여 builder 생성
-            builder = NotificationCompat.Builder(requireContext(), channelId)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (!NotificationManagerCompat.from(this.requireContext()).areNotificationsEnabled()) {
-                    // 알림 권한이 없다면, 사용자에게 권한 요청
-                    val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                        putExtra(Settings.EXTRA_APP_PACKAGE, "com.example.teamprojectchicken")
-                    }
-                    startActivity(intent)
-                }
-            }
-        }else {
-            // 26 버전 이하
-            builder = NotificationCompat.Builder(requireContext())
-        }
-
-        val intent = Intent(this.context, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        val pendingIntent = PendingIntent.getActivity(this.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        builder.run {
-            setSmallIcon(R.drawable.ic_bell)
-            setWhen(System.currentTimeMillis())
-            setContentTitle("연락처 알림")
-            setContentText("${name}에게 연락할 시간입니다.")
-            addAction(R.mipmap.ic_launcher, "Action", pendingIntent)
-        }
-        manager.notify(11, builder.build())
+    private fun setAlarm(minutes: Int) {
+        val alarmManager: AlarmManager = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent: PendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        var time: Long = System.currentTimeMillis() + (minutes * 60 * 1000)
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent)
     }
 
     private fun showPopup(v: View) {
