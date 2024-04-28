@@ -124,7 +124,7 @@ class ContactDetailFragment : Fragment() {
             ContactDetailFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_CONTACT, contact)
-                    putInt(ARG_POSITION, position)
+                    putInt(ARG_POSITION,position)
                 }
             }
     }
@@ -220,12 +220,13 @@ class ContactDetailFragment : Fragment() {
                 }
                 binding.dlBtnDeleteConfirm.setOnClickListener {
                     Toast.makeText(requireContext(), "연락처가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                    parentFragmentManager.popBackStack()
+
                     alertDialog.dismiss()
                     setFragmentResult(
                         "deleteContact",
                         bundleOf("position" to position, "isDeleted" to true)
                     )
+                    parentFragmentManager.popBackStack()
 
                 }
                 alertDialog.show()

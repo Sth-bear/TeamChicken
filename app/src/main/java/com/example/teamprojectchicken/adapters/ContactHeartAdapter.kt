@@ -104,6 +104,12 @@ class ContactHeartAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
     }
+//    fun removeItemInHeartFrag(position: Int) {
+//        contactList.removeAt(position)
+//        notifyItemRemoved(position)
+//        notifyItemRangeChanged(position, itemCount - position)
+//
+//    }
 
     fun submitList(items: MutableList<Contact>) {
         items.sortBy { it.name }

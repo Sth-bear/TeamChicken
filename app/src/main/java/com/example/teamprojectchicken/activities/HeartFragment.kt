@@ -3,6 +3,7 @@ package com.example.teamprojectchicken.activities
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -55,7 +56,6 @@ class HeartFragment : Fragment() {
         ivSetOnClick()
         goToHeartDetail()
         goToCall()
-
     }
     private fun bindDefault() {
         with(binding.rvHeartList) {
@@ -70,18 +70,7 @@ class HeartFragment : Fragment() {
             }
         }
     }
-    fun deletedContactInHeartFrag(){
-        setFragmentResultListener("deleteContact") { requestKey, bundle ->
-            // 번들에서 'position'과 'isDeleted' 값을 가져옴
-            val position = bundle.getInt("position")
-            val isDeleted = bundle.getBoolean("isDeleted")
 
-           // if (isDeleted) {
-                // 아이템이 삭제되었다면, 해당 위치의 아이템을 어댑터에서 제거
-                //contactHeartAdapter.removeItem(position)
-           // }
-        }
-    }
     private fun ivSetOnClick() {
         binding.ivSet.setOnClickListener {
             if (viewModel.getType() == VIEW_TYPE_LINEAR) {
@@ -128,6 +117,17 @@ class HeartFragment : Fragment() {
             }
         }
     }
+//    private fun delContactAfterPage(){
+//        setFragmentResultListener("deleteContact"){key, bundle ->
+//            val position = bundle.getInt("position")
+//            val isDeleted = bundle.getBoolean("isDeleted",false)
+//            if (isDeleted && position != -1){
+//                contactHeartAdapter.removeItemInHeartFrag(position)
+//                list.removeAt(position)
+//                Log.d("check2","$position,$list",)
+//            }
+//        }
+//    }
 
     private fun goToCall() {
         binding.svHeartSearch.isSubmitButtonEnabled = true
@@ -143,21 +143,16 @@ class HeartFragment : Fragment() {
         })
     }
 
-    override fun onStart() {
-        super.onStart()
-
-    }
-
     override fun onResume() {
         super.onResume()
         (activity as? FragmentActivity)?.isvisible()
+
       contactHeartAdapter.submitList(list)
 
     }
 
     override fun onPause() {
         super.onPause()
-        deletedContactInHeartFrag()
 
     }
 
