@@ -8,7 +8,9 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -17,6 +19,7 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -270,6 +273,8 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         alertDialog.setView(binding.root)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+        requestNotificationPermission()
+
         binding.btnNotificationDlCancel.setOnClickListener {
             alertDialog.dismiss()
         }
@@ -319,6 +324,18 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         val pendingIntent: PendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         var time: Long = System.currentTimeMillis() + (minutes * 60 * 1000)
         alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()) {
+                // 알림 권한이 없다면, 사용자에게 권한 요청
+                val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, "com.example.teamprojectchicken")
+                }
+                startActivity(intent)
+            }
+        }
     }
 
     private fun showPopup(v: View) {
