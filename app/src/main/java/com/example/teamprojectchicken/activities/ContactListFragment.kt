@@ -329,7 +329,7 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         if (minutes == 0) {
             alarmManager.cancel(pendingIntent)
         } else {
-            val time: Long = System.currentTimeMillis() + (minutes * 1 * 1000)
+            val time: Long = System.currentTimeMillis() + (minutes * 60 * 1000)
             alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent)
         }
     }
