@@ -29,20 +29,21 @@ class AlarmReceiver() : BroadcastReceiver() {
             )
         )
 
-        val intent = Intent(context, MainActivity::class.java).apply {
+        val name = intent?.getStringExtra("Name")
+        val intent2 = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 context,
                 111,
-                intent,
+                intent2,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_bell)
             .setContentTitle("연락처 알림")
-            .setContentText("연락할 시간입니다.")
+            .setContentText("${name}에게 연락할 시간입니다.")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
