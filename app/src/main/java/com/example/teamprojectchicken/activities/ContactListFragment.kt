@@ -231,8 +231,7 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
                         alertDialog.dismiss()
                     }
                 } catch (e: java.lang.NumberFormatException) {
-                    Toast.makeText(requireContext(), "11자리 이하의 전화번호를 입력해주세요.", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(requireContext(), "11자리 이하의 전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
                 }
             } else if (name.isEmpty() || number.isEmpty() || email.isEmpty()) {
                 Toast.makeText(requireContext(), "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
@@ -302,10 +301,14 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
 
             if (name.isNotEmpty() && number.isNotEmpty() && radioGroup.checkedRadioButtonId > -1) {
                 try {
-                    if (number.toInt() is Int) {
-                        setAlarm(minutes)
-                        Toast.makeText(requireContext(), "알림을 추가했습니다.", Toast.LENGTH_SHORT).show()
+                    if (minutes == 0) {
+                        setAlarm(name, minutes)
+                        Toast.makeText(requireContext(), "알림을 취소했습니다.", Toast.LENGTH_SHORT).show()
                         alertDialog.dismiss()
+                    } else {
+                            setAlarm(name, minutes)
+                            Toast.makeText(requireContext(), "알림을 추가했습니다.", Toast.LENGTH_SHORT).show()
+                            alertDialog.dismiss()
                     }
                 } catch (e: java.lang.NumberFormatException) {
                     Toast.makeText(requireContext(), "11자리 이하의 숫자를 입력해주세요.", Toast.LENGTH_SHORT)
@@ -318,12 +321,17 @@ class ContactListFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
         alertDialog.show()
     }
 
-    private fun setAlarm(minutes: Int) {
+    private fun setAlarm(name: String, minutes: Int) {
         val alarmManager: AlarmManager = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
+        intent.putExtra("Name", name)
         val pendingIntent: PendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        var time: Long = System.currentTimeMillis() + (minutes * 60 * 1000)
-        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+        if (minutes == 0) {
+            alarmManager.cancel(pendingIntent)
+        } else {
+            val time: Long = System.currentTimeMillis() + (minutes * 60 * 1000)
+            alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent)
+        }
     }
 
     private fun requestNotificationPermission() {
